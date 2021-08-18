@@ -1,22 +1,25 @@
 import com.soywiz.korge.view.*
-import com.soywiz.korim.color.Colors
-import com.soywiz.korma.geom.Point
+import kotlin.random.Random
 
 
-fun Stage.enemy(bus: EventBus, startPosition: Point) {
+fun Stage.enemy(
+    bus: EventBus,
+    spawnX: Double,
+    spawnMinY: Double,
+    spawnMaxY: Double,
+    baseX: Double,
+    runAnimation: SpriteAnimation
+) {
     val speed = 50f
-    val target = findViewByName("parcel")!!
-
-    var parcelReached = false
-    var hp = 3
-    circle(30.0, Colors.RED) {
+    var hp = 2
+    sprite(runAnimation) {
         addProp("enemy", true)
-        position(startPosition)
-        anchor(.5, .5)
+        scale = 0.3
+        position(spawnX, Random.nextDouble(spawnMaxY, spawnMinY - scaledHeight))
+        playAnimationLooped()
         addUpdater { delta ->
-            if (!parcelReached) {
-                move(target.pos, speed, delta.seconds)
-                parcelReached = collidesWith(target)
+            if (x < baseX - scaledWidth) {
+                x += delta.seconds * speed
             }
         }
         bus.register<BulletHitEvent> { event ->
@@ -28,14 +31,6 @@ fun Stage.enemy(bus: EventBus, startPosition: Point) {
             }
         }
     }
-
-}
-
-
-private fun View.move(target: Point, speed: Float, delta: Double) {
-    val dir = target - pos
-    dir.normalize()
-    pos = pos + dir * (speed * delta)
 }
 
 
