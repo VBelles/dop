@@ -1,4 +1,4 @@
-import com.soywiz.klock.TimeProvider
+import com.soywiz.klock.DateTime
 import com.soywiz.korev.Key
 import com.soywiz.korev.MouseButton
 import com.soywiz.korge.input.Input
@@ -15,9 +15,9 @@ fun Stage.player(bus: EventBus) {
         .position(width / 2, height / 2)
         .addUpdater { delta ->
             move(input, dir, speed, delta.seconds)
-            val now = TimeProvider.now().unixMillis
+            val now = DateTime.now().unixMillis
             if (input.mouseButtonPressed(MouseButton.LEFT) && now - lastShot >= 500) {
-                stage?.bullet(bus, pos, input.mouse)
+                stage?.bullet(bus, pos, mouseXY)
                 lastShot = now
             }
         }
