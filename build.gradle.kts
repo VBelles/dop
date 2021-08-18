@@ -18,7 +18,6 @@ apply<KorgeGradlePlugin>()
 
 korge {
 	id = "io.github.vbelles.dop.dop"
-	supportBox2d()
 // To enable all targets at once
 
 	//targetAll()
@@ -33,4 +32,8 @@ korge {
 	targetDesktop()
 	targetIos()
 	targetAndroidIndirect() // targetAndroidDirect()
+}
+
+rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
+	rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().versions.webpackDevServer.version = "4.0.0-rc.0"
 }
