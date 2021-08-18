@@ -27,15 +27,15 @@ suspend fun main() = Korge(
     val spawnMin = objects.getByName("spawn_min")!!
     val baseX = objects.getByName("base")!!.x
 
-    val weapon = resourcesVfs["shell.png"].readBitmap()
+    val weapon = resourcesVfs["sprites/shell.png"].readBitmap()
 
     tiledMapView(map)
-    player(bus, playerSpawn, weapon)
 
+    val playerAtlas = resourcesVfs["sprites/player/player_sheet.xml"].readAtlas()
+    player(bus, playerSpawn, weapon, playerAtlas)
 
-    val zombieAtlas = resourcesVfs["sprites/zombie/character_zombie_sheet.xml"].readAtlas()
+    val zombieAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
     val runAnimation = zombieAtlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
-    //enemy(bus, spawnMax.x, spawnMin.y, spawnMax.y, baseX, runAnimation)
     while (true) {
         enemy(bus, spawnMax.x, spawnMin.y, spawnMax.y, baseX, runAnimation)
         delay(500)

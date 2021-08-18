@@ -1,18 +1,23 @@
 import com.soywiz.klock.DateTime
+import com.soywiz.klock.TimeSpan
 import com.soywiz.korev.Key
 import com.soywiz.korev.MouseButton
 import com.soywiz.korge.input.Input
 import com.soywiz.korge.view.*
+import com.soywiz.korim.atlas.Atlas
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
 import com.soywiz.korma.geom.plus
 
-fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap) {
+fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap, atlas: Atlas) {
     val speed = 150f
     val dir = Point()
     var lastShot = 0.0
-    solidRect(15.0, 25.0) {
+
+    val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
+    sprite(runAnimation) {
+        scale(-0.3, 0.3)
         name("player")
         anchor(.5, .5)
         position(spawn)
@@ -24,6 +29,7 @@ fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap) {
                 lastShot = now
             }
         }
+        playAnimationLooped()
     }
 }
 
