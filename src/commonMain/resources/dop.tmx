@@ -112,10 +112,10 @@
 </data>
  </layer>
  <objectgroup id="3" name="objects">
-  <object id="2" name="base" gid="440" x="578" y="638" width="16" height="16"/>
+  <object id="2" name="base" gid="440" x="578" y="638"/>
   <object id="4" name="spawn_max" gid="440" x="-35" y="527" width="16" height="16"/>
   <object id="5" name="spawn_min" gid="440" x="-35" y="758" width="16" height="16"/>
-  <object id="8" name="player_spawn" gid="440" x="688" y="639" width="16" height="16"/>
+  <object id="8" name="player_spawn" gid="440" x="702" y="639"/>
   <object id="9" name="weapon" gid="555" x="-140" y="521.333" width="16" height="16"/>
  </objectgroup>
 </map>

@@ -15,8 +15,9 @@ fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap, atlas: Atlas) {
     val dir = Point()
     var lastShot = 0.0
 
-    val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
-    sprite(runAnimation) {
+    //val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
+    val attackAnimation = atlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
+    sprite(attackAnimation) {
         scale(-0.3, 0.3)
         name("player")
         anchor(.5, .5)
@@ -25,11 +26,11 @@ fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap, atlas: Atlas) {
             move(input, dir, speed, delta.seconds)
             val now = DateTime.now().unixMillis
             if (input.mouseButtonPressed(MouseButton.LEFT) && now - lastShot >= 500) {
+                playAnimation(attackAnimation)
                 stage?.bullet(bus, pos, mouseXY, weapon)
                 lastShot = now
             }
         }
-        playAnimationLooped()
     }
 }
 
