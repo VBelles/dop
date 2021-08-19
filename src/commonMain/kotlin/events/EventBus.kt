@@ -1,3 +1,5 @@
+package events
+
 import com.soywiz.korge.bus.GlobalBus
 import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.lang.Closeable

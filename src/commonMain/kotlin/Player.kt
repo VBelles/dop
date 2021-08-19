@@ -9,19 +9,36 @@ import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
 import com.soywiz.korma.geom.plus
+import events.BulletHitEvent
+import events.EnemyAttackEvent
+import events.EventBus
 
 fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap, atlas: Atlas) {
     val speed = 150f
     val dir = Point()
     var lastShot = 0.0
-
+    var hp = 500
     //val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
     val attackAnimation = atlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
+
+
+    val hpIndicator = text("HP: $hp", textSize = 20.0) {
+        position(this@player.width - 150, this@player.height - 250)
+    }
+
     sprite(attackAnimation) {
         scale(-0.3, 0.3)
         name("player")
         anchor(.5, .5)
         position(spawn)
+        bus.register<EnemyAttackEvent> { attack ->
+            hp -= attack.damage
+            println(hp)
+            hpIndicator.text = "HP: $hp"
+            if (hp <= 0) {
+                hpIndicator.text = "Parcel lost"
+            }
+        }
         addUpdater { delta ->
             move(input, dir, speed, delta.seconds)
             val now = DateTime.now().unixMillis
