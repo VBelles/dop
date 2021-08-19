@@ -3,4 +3,3 @@
 *.iml
 /build
 # Project exclude paths
-/gradle/
