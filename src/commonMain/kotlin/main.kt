@@ -35,9 +35,8 @@ suspend fun main() = Korge(
     player(bus, playerSpawn, weapon, playerAtlas)
 
     val zombieAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
-    val runAnimation = zombieAtlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
     while (true) {
-        enemy(bus, spawnMax.x, spawnMin.y, spawnMax.y, baseX, runAnimation)
+        enemy(bus, spawnMax.x, spawnMin.y, spawnMax.y, baseX, zombieAtlas)
         delay(500)
     }
 }

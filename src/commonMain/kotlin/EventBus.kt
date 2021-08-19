@@ -1,5 +1,6 @@
 import com.soywiz.korge.bus.GlobalBus
 import com.soywiz.korio.async.launchImmediately
+import com.soywiz.korio.lang.Closeable
 import kotlinx.coroutines.CoroutineScope
 import kotlin.reflect.KClass
 
@@ -18,11 +19,11 @@ class EventBus(private val scope: CoroutineScope) {
         }
     }
 
-    fun <T : Any> register(clazz: KClass<out T>, handler: suspend (T) -> Unit) {
-        globalBus.register(clazz, handler)
+    fun <T : Any> register(clazz: KClass<out T>, handler: suspend (T) -> Unit): Closeable {
+        return globalBus.register(clazz, handler)
     }
 
-    inline fun <reified T : Any> register(noinline handler: suspend (T) -> Unit) {
-        register(T::class, handler)
+    inline fun <reified T : Any> register(noinline handler: suspend (T) -> Unit): Closeable {
+        return register(T::class, handler)
     }
 }
