@@ -12,4 +12,8 @@ class TimeLock(private val delay: Double) {
         }
         return false
     }
+
+    fun isReady(): Boolean {
+        return DateTime.nowUnix() - lastTick >= delay
+    }
 }

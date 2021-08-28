@@ -1,6 +1,7 @@
 import com.soywiz.korge.Korge
 import com.soywiz.korge.tiled.readTiledMap
 import com.soywiz.korge.tiled.tiledMapView
+import com.soywiz.korge.view.container
 import com.soywiz.korim.atlas.readAtlas
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
@@ -26,12 +27,15 @@ suspend fun main() = Korge(
     val spawnMin = objects.getByName("spawn_min")!!
     val baseX = objects.getByName("base")!!.x
 
-    val weapon = resourcesVfs["sprites/shell.png"].readBitmap()
 
-    tiledMapView(map)
+    container {
+        tiledMapView(map)
+        val playerAtlas = resourcesVfs["sprites/player/player_sheet.xml"].readAtlas()
+        player(bus, playerSpawn, playerAtlas)
+        //addFilter(BlurFilter())
+    }
 
-    val playerAtlas = resourcesVfs["sprites/player/player_sheet.xml"].readAtlas()
-    player(bus, playerSpawn, weapon, playerAtlas)
+    //shop(bus)
 
     val zombieAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
     while (true) {
