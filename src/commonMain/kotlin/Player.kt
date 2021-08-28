@@ -1,4 +1,3 @@
-import com.soywiz.klock.DateTime
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korev.Key
 import com.soywiz.korev.MouseButton
@@ -16,11 +15,10 @@ import events.EventBus
 fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap, atlas: Atlas) {
     val speed = 150f
     val dir = Point()
-    var lastShot = 0.0
+    val timeLock = TimeLock(500.0)
     var hp = 500
     //val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
     val attackAnimation = atlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
-
 
     val hpIndicator = text("HP: $hp", textSize = 20.0) {
         position(this@player.width - 150, this@player.height - 250)
@@ -41,11 +39,9 @@ fun Stage.player(bus: EventBus, spawn: Point, weapon: Bitmap, atlas: Atlas) {
         }
         addUpdater { delta ->
             move(input, dir, speed, delta.seconds)
-            val now = DateTime.now().unixMillis
-            if (input.mouseButtonPressed(MouseButton.LEFT) && now - lastShot >= 500) {
+            if (input.mouseButtonPressed(MouseButton.LEFT) && timeLock.check()) {
                 playAnimation(attackAnimation)
                 stage?.bullet(bus, pos, mouseXY, weapon)
-                lastShot = now
             }
         }
     }

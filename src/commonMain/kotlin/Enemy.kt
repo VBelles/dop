@@ -1,4 +1,3 @@
-import com.soywiz.klock.DateTime
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
 import com.soywiz.korim.atlas.Atlas
@@ -25,7 +24,7 @@ fun Stage.enemy(
     val runAnimation = atlas.getSpriteAnimation(prefix = "walk", TimeSpan(120.0))
     val attackAnimation = atlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
     var action = Action.Running
-    var lastAttack = 0.0
+    val timeLock = TimeLock(1500.0)
     sprite(runAnimation) {
         addProp("enemy", true)
         scale = 0.3
@@ -55,9 +54,7 @@ fun Stage.enemy(
                     }
                 }
                 Action.Attacking -> {
-                    val now = DateTime.nowUnix()
-                    if (now - lastAttack >= 1000) {
-                        lastAttack = now
+                    if (timeLock.check()) {
                         bus.send(EnemyAttackEvent(5))
                     }
                 }
