@@ -16,7 +16,7 @@ data class Weapon(
 }
 
 data class Inventory(
-    val weapons: List<Weapon>,
-    val money: Int,
-    val score: Int,
+    var weapons: List<Weapon>,
+    var money: Int,
+    var score: Int,
 )

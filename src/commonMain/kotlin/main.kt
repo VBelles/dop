@@ -11,6 +11,41 @@ import com.soywiz.korma.geom.ScaleMode
 import events.EventBus
 import kotlinx.coroutines.delay
 
+private suspend fun initInventory() = Inventory(
+    weapons = listOf(
+        Weapon(
+            price = 0,
+            bought = true,
+            name = "Shell",
+            description = "Hard, fast and precise shells that hits up to 1 invader\ndealing 5 damage\nCan shoot every 0,5s",
+            damage = 5.0,
+            fireRate = 500.0,
+            bitmap = resourcesVfs["sprites/shell.png"].readBitmap(),
+            type = Weapon.Type.Shell,
+        ),
+        Weapon(
+            price = 7500,
+            bought = false,
+            name = "Umbrella",
+            description = "Like a javelin that go through 3 invaders dealing 5 damage\nto each\nCan shoot every 1s",
+            damage = 5.0,
+            fireRate = 1000.0,
+            bitmap = resourcesVfs["sprites/beach_umbrella.png"].readBitmap(),
+            type = Weapon.Type.Umbrella,
+        ),
+        Weapon(
+            price = 21000,
+            bought = false,
+            name = "Ball",
+            description = "A very inflated beach ball that explodes on contact with\nsand or invaders dealing 5 area damage\nCan shoot every 2s",
+            damage = 5.0,
+            fireRate = 500.0,
+            bitmap = resourcesVfs["sprites/beach_ball.png"].readBitmap(),
+            type = Weapon.Type.Ball,
+        ),
+    ),
+    0, 0,
+)
 
 suspend fun main() = Korge(
     virtualWidth = 800, virtualHeight = 800,
@@ -28,14 +63,15 @@ suspend fun main() = Korge(
     val baseX = objects.getByName("base")!!.x
 
 
+    val inventory = initInventory()
     container {
         tiledMapView(map)
         val playerAtlas = resourcesVfs["sprites/player/player_sheet.xml"].readAtlas()
-        player(bus, playerSpawn, playerAtlas)
+        player(bus, playerSpawn, playerAtlas, inventory)
         //addFilter(BlurFilter())
     }
 
-    //shop(bus)
+    //shop(bus, inventory)
 
     val zombieAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
     while (true) {

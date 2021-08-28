@@ -7,8 +7,8 @@ import com.soywiz.korio.file.std.resourcesVfs
 import events.EventBus
 
 
-suspend fun Stage.shop(bus: EventBus, inventory: Inventory) {
-    var money = 10000
+fun Stage.shop(bus: EventBus, inventory: Inventory) {
+
     var selectedIndex = 0
 
     fun updateSelected(index: Int) {
@@ -23,30 +23,30 @@ suspend fun Stage.shop(bus: EventBus, inventory: Inventory) {
         val buyText = findViewByName("buyText") as Text
         buyText.text = when {
             weapon.bought -> "Owned"
-            weapon.price > money -> "Costs ${weapon.price}"
+            weapon.price > inventory.money -> "Costs ${weapon.price}"
             else -> "Buy by ${weapon.price}"
         }
         buyText.centerOn(buyText.parent!!)
         (findViewByName("buyBackground") as RoundRect).fill = when {
-            weapon.bought || weapon.price > money -> Colors.BLACK.withA(70)
+            weapon.bought || weapon.price > inventory.money -> Colors.BLACK.withA(70)
             else -> Colors["#43a047"]
         }
     }
 
     fun buyWeapon() {
         val weapon = inventory.weapons[selectedIndex]
-        if (weapon.bought || weapon.price > money) return
-        money -= weapon.price
+        if (weapon.bought || weapon.price > inventory.money) return
+        inventory.money -= weapon.price
 
-        /*shopState = inventory.copy(weapons = shopState.weapons.mapIndexed { index: Int, w: Weapon ->
+        inventory.weapons = inventory.weapons.mapIndexed { index: Int, w: Weapon ->
             when (index) {
                 selectedIndex -> w.copy(bought = true)
                 else -> w
             }
-        })*/
+        }
 
         updateSelected(selectedIndex)
-        (findViewByName("money") as Text).text = "Money $money"
+        (findViewByName("money") as Text).text = "Money ${inventory.money}"
     }
 
     container {
@@ -117,7 +117,7 @@ suspend fun Stage.shop(bus: EventBus, inventory: Inventory) {
     }
 
     container {
-        text("Money $money") {
+        text("Money ${inventory.money}") {
             name("money")
         }
         alignBottomToBottomOf(root, 10)
