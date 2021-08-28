@@ -1,5 +1,6 @@
 import bullet.ballBullet
 import bullet.shellBullet
+import bullet.umbrellaBullet
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korev.Key
 import com.soywiz.korev.MouseButton
@@ -65,7 +66,7 @@ suspend fun Container.player(bus: EventBus, spawn: Point, atlas: Atlas, inventor
                     val target = Point(stage!!.mouseXY)
                     when (selectedWeapon.type) {
                         Weapon.Type.Shell -> shellBullet(bus, startPosition, target, selectedWeapon)
-                        Weapon.Type.Umbrella -> ballBullet(bus, startPosition, target, selectedWeapon)
+                        Weapon.Type.Umbrella -> umbrellaBullet(bus, startPosition, target, selectedWeapon)
                         Weapon.Type.Ball -> ballBullet(bus, startPosition, target, selectedWeapon)
                     }
                 }
