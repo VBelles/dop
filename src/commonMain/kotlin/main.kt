@@ -11,8 +11,11 @@ import com.soywiz.korma.geom.ScaleMode
 import events.EventBus
 import kotlinx.coroutines.delay
 
-private suspend fun initInventory() = Inventory(
-    weapons = listOf(
+
+suspend fun initWeapons(): List<Weapon> {
+    // This is stupid but listOf is not working on js
+    val weapons = mutableListOf<Weapon>()
+    weapons.add(
         Weapon(
             price = 0,
             bought = true,
@@ -22,7 +25,10 @@ private suspend fun initInventory() = Inventory(
             fireRate = 500.0,
             bitmap = resourcesVfs["sprites/shell.png"].readBitmap(),
             type = Weapon.Type.Shell,
-        ),
+        )
+    )
+
+    weapons.add(
         Weapon(
             price = 7500,
             bought = false,
@@ -32,7 +38,9 @@ private suspend fun initInventory() = Inventory(
             fireRate = 1000.0,
             bitmap = resourcesVfs["sprites/beach_umbrella.png"].readBitmap(),
             type = Weapon.Type.Umbrella,
-        ),
+        )
+    )
+    weapons.add(
         Weapon(
             price = 21000,
             bought = false,
@@ -42,10 +50,10 @@ private suspend fun initInventory() = Inventory(
             fireRate = 500.0,
             bitmap = resourcesVfs["sprites/beach_ball.png"].readBitmap(),
             type = Weapon.Type.Ball,
-        ),
-    ),
-    0, 0,
-)
+        )
+    )
+    return weapons
+}
 
 suspend fun main() = Korge(
     virtualWidth = 800, virtualHeight = 800,
@@ -62,8 +70,8 @@ suspend fun main() = Korge(
     val spawnMin = objects.getByName("spawn_min")!!
     val baseX = objects.getByName("base")!!.x
 
+    val inventory = Inventory(weapons = initWeapons(), money = 25, score = 25)
 
-    val inventory = initInventory()
     container {
         tiledMapView(map)
         val playerAtlas = resourcesVfs["sprites/player/player_sheet.xml"].readAtlas()
