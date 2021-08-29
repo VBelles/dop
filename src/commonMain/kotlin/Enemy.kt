@@ -5,6 +5,7 @@ import com.soywiz.korim.atlas.Atlas
 import com.soywiz.korio.async.launch
 import com.soywiz.korma.geom.Point
 import events.BulletHitEvent
+import events.ClearWaveEvent
 import events.EnemyAttackEvent
 import events.EventBus
 import kotlin.random.Random
@@ -18,7 +19,7 @@ private enum class Action {
     Running, Attacking, Dying
 }
 
-suspend fun Stage.enemy(
+suspend fun Container.enemy(
     bus: EventBus,
     spawnX: Double,
     spawnMinY: Double,
@@ -44,17 +45,25 @@ suspend fun Stage.enemy(
         position(spawnX, Random.nextDouble(spawnMaxY, spawnMinY) - scaledHeight)
         playAnimationLooped()
 
+        fun die() {
+            hp = 0
+            addProp("enemy", false)
+            scaleX = -scaleX
+            x += scaledHeight
+            playAnimationLooped(runAnimation)
+            action = Action.Dying
+        }
+
         val eventListener = bus.register<BulletHitEvent> { event ->
             if (event.target === this) {
-                hp--
-                if (hp <= 0) {
-                    addProp("enemy", false)
-                    scaleX = -scaleX
-                    x += scaledHeight
-                    playAnimationLooped(runAnimation)
-                    action = Action.Dying
+                if (--hp <= 0) {
+                    die()
                 }
             }
+        }
+
+        val waveClearListener = bus.register<ClearWaveEvent> {
+            die()
         }
 
         addUpdaterWithViews { views, delta ->
@@ -85,6 +94,7 @@ suspend fun Stage.enemy(
                     if (alpha <= 0) {
                         removeFromParent()
                         eventListener.close()
+                        waveClearListener.close()
                     }
                 }
             }

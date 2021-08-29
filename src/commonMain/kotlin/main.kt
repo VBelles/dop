@@ -3,18 +3,21 @@ import com.soywiz.korge.Korge
 import com.soywiz.korge.tiled.readTiledMap
 import com.soywiz.korge.tiled.tiledMapView
 import com.soywiz.korge.view.container
+import com.soywiz.korge.view.filter.BlurFilter
+import com.soywiz.korge.view.name
 import com.soywiz.korim.atlas.readAtlas
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.Anchor
 import com.soywiz.korma.geom.Point
 import com.soywiz.korma.geom.ScaleMode
+import events.ClearWaveEvent
 import events.EventBus
+import events.NextWaveEvent
 import kotlinx.coroutines.delay
 
 
 data class Wave(
-    val ordinal: Int,
     val duration: Double,
     val enemyRate: List<Long>,
 )
@@ -80,20 +83,29 @@ suspend fun main() = Korge(
     val weapons = initWeapons()
     val inventory = Inventory(weapons = weapons, money = 25, score = 25)
 
-    container {
+    val scenario = container {
         tiledMapView(map)
         val playerAtlas = resourcesVfs["sprites/player/player_sheet.xml"].readAtlas()
         player(bus, playerSpawn, playerAtlas, inventory)
-        //addFilter(BlurFilter())
     }
 
+    val shop = container {
+        name("shop")
+        shop(bus, inventory)
+        visible = false
+    }
+
+    val blurFilter = BlurFilter()
     val zombieAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
 
-    //shop(bus, inventory)
-
     val waves = mutableListOf<Wave>()
-    waves.add(Wave(0, 30000.0, listOf(1500L, 1000L, 800L)))
-
+    waves.add(Wave(5000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(35000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(40000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(45000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(50000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(55000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(60000.0, listOf(1500L, 1000L, 800L)))
 
     waves.forEach { wave ->
         var now = DateTime.nowUnix()
@@ -104,7 +116,7 @@ suspend fun main() = Korge(
             val phase = (progress * wave.enemyRate.size).toInt()
             delay(wave.enemyRate[phase])
             now = DateTime.nowUnix()
-            enemy(
+            scenario.enemy(
                 bus,
                 spawnMax.x,
                 spawnMin.y,
@@ -115,12 +127,15 @@ suspend fun main() = Korge(
                 weapons.last()
             )
         }
+
+        bus.send(ClearWaveEvent)
+        scenario.addFilter(blurFilter)
+        shop.visible = true
+
+        bus.waitEvent<NextWaveEvent>()
+
+        shop.visible = false
+        scenario.removeFilter(blurFilter)
     }
-
-    /* while (true) {
-         enemy(bus, spawnMax.x, spawnMin.y, spawnMax.y, baseX, zombieAtlas, EnemyType.values().random(), weapons.last())
-         delay(500)
-     }*/
-
 
 }

@@ -4,6 +4,8 @@ import com.soywiz.korge.bus.GlobalBus
 import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.lang.Closeable
 import kotlinx.coroutines.CoroutineScope
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KClass
 
 // https://github.com/TobseF/Candy-Crush-Clone/blob/master/src/commonMain/kotlin/j4k/candycrush/lib/EventBus.kt
@@ -27,5 +29,15 @@ class EventBus(private val scope: CoroutineScope) {
 
     inline fun <reified T : Any> register(noinline handler: suspend (T) -> Unit): Closeable {
         return register(T::class, handler)
+    }
+
+    suspend inline fun <reified T : Any> waitEvent() {
+        suspendCoroutine<Unit> { continuation ->
+            var closeable: Closeable? = null
+            closeable = register<T> {
+                closeable?.close()
+                continuation.resume(Unit)
+            }
+        }
     }
 }

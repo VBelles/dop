@@ -1,13 +1,11 @@
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.view.*
-import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.color.Colors
-import com.soywiz.korim.format.readBitmap
-import com.soywiz.korio.file.std.resourcesVfs
 import events.EventBus
+import events.NextWaveEvent
 
 
-fun Stage.shop(bus: EventBus, inventory: Inventory) {
+fun Container.shop(bus: EventBus, inventory: Inventory) {
 
     var selectedIndex = 0
 
@@ -114,6 +112,25 @@ fun Stage.shop(bus: EventBus, inventory: Inventory) {
         alignBottomToBottomOf(root, 250)
         alignLeftToLeftOf(root, 60)
         onClick { buyWeapon() }
+    }
+
+    container {
+        roundRect(
+            width = 100.0,
+            height = 30.0,
+            rx = 15.0,
+            ry = 15.0,
+            fill = Colors["#43a047"].withA(180),
+        ) {
+            name("buyBackground")
+        }
+        alignBottomToBottomOf(root, 250)
+        alignRightToRightOf(root, 60)
+        onClick { bus.send(NextWaveEvent) }
+        text("Next wave", color = Colors.WHITE) {
+            centerOn(parent!!)
+        }
+
     }
 
     container {

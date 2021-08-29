@@ -8,9 +8,7 @@ import com.soywiz.korge.input.Input
 import com.soywiz.korge.view.*
 import com.soywiz.korim.atlas.Atlas
 import com.soywiz.korim.bitmap.slice
-import com.soywiz.korim.format.readBitmap
 import com.soywiz.korio.async.launch
-import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.Point
 import events.EnemyAttackEvent
 import events.EventBus
@@ -57,9 +55,10 @@ suspend fun Container.player(bus: EventBus, spawn: Point, atlas: Atlas, inventor
             }
         }
 
+        val shop by lazy { root.findViewByName("shop")!! }
         addUpdaterWithViews { views, delta ->
             move(input, dir, speed, delta.seconds)
-            if (input.mouseButtonPressed(MouseButton.LEFT) && timeLock.check()) {
+            if (input.mouseButtonPressed(MouseButton.LEFT) && !shop.visible && timeLock.check()) {
                 playAnimation(attackAnimation)
                 launch(views.coroutineContext) {
                     val startPosition = pos + weaponOffset
