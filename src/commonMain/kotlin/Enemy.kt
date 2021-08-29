@@ -1,8 +1,7 @@
 import bullet.enemyBullet
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
-import com.soywiz.korim.atlas.Atlas
-import com.soywiz.korio.async.launch
+import com.soywiz.korinject.injector
 import com.soywiz.korma.geom.Point
 import events.BulletHitEvent
 import events.ClearWaveEvent
@@ -20,19 +19,17 @@ private enum class Action {
 }
 
 suspend fun Container.enemy(
-    bus: EventBus,
-    spawnX: Double,
-    spawnMinY: Double,
-    spawnMaxY: Double,
+    startPosition: Point,
     baseX: Double,
-    atlas: Atlas,
     type: EnemyType,
     weapon: Weapon,
 ) {
+    val bus = injector().get<EventBus>()
     val speed = 50f
     var hp = 2
-    val runAnimation = atlas.getSpriteAnimation(prefix = "walk", TimeSpan(120.0))
-    val attackAnimation = atlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
+    val assets = injector().get<Assets>()
+    val runAnimation = assets.invaderAtlas.getSpriteAnimation(prefix = "walk", TimeSpan(120.0))
+    val attackAnimation = assets.invaderAtlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
     var action = Action.Running
 
     val fireRate = if (type == EnemyType.Melee) 1500.0 else 2500.0
@@ -42,7 +39,8 @@ suspend fun Container.enemy(
     sprite(runAnimation) {
         addProp("enemy", true)
         scale = 0.3
-        position(spawnX, Random.nextDouble(spawnMaxY, spawnMinY) - scaledHeight)
+        center()
+        position(startPosition)
         playAnimationLooped()
 
         fun die() {
@@ -82,9 +80,7 @@ suspend fun Container.enemy(
                         }
                         EnemyType.Range -> if (timeLock.check()) {
                             playAnimation(attackAnimation)
-                            views.launch {
-                                enemyBullet(bus, pos, Point(baseX, pos.y + scaledHeight / 2), weapon)
-                            }
+                            enemyBullet(bus, pos, Point(baseX, pos.y + scaledHeight / 2), weapon, assets)
                         }
                     }
                 }

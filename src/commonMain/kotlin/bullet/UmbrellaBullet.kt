@@ -1,5 +1,6 @@
 package bullet
 
+import Assets
 import Weapon
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
@@ -10,13 +11,13 @@ import events.EventBus
 import kotlin.math.PI
 import kotlin.math.atan2
 
-fun Container.umbrellaBullet(bus: EventBus, position: Point, targetPosition: Point, weapon: Weapon) {
+fun Container.umbrellaBullet(bus: EventBus, position: Point, targetPosition: Point, weapon: Weapon, assets: Assets) {
     var hp = 3
     val dir = targetPosition - position
     dir.normalize()
     val collided = mutableSetOf<View>()
     val angle = atan2(dir.y, dir.x) + PI / 2.0
-    sprite(weapon.bitmap) {
+    sprite(assets.getWeaponBitmap(weapon)) {
         rotation(Angle(angle))
         addProp("bullet", true)
         position(position)

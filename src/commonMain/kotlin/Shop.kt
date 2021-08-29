@@ -1,11 +1,16 @@
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.view.*
 import com.soywiz.korim.color.Colors
+import com.soywiz.korinject.injector
 import events.EventBus
 import events.NextWaveEvent
 
 
-fun Container.shop(bus: EventBus, inventory: Inventory) {
+suspend fun Container.shop() {
+
+    val bus = injector().get<EventBus>()
+    val inventory = injector().get<Inventory>()
+    val assets = injector().get<Assets>()
 
     var selectedIndex = 0
 
@@ -62,7 +67,7 @@ fun Container.shop(bus: EventBus, inventory: Inventory) {
                 ) {
                     name("weapon_$index")
                     onClick { updateSelected(index) }
-                    sprite(texture = weapon.bitmap) {
+                    sprite(assets.getWeaponBitmap(weapon)) {
                         smoothing = false
                         scaledHeight = 50.0
                         scaledWidth = width * 50.0 / height

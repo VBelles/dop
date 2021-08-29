@@ -1,5 +1,3 @@
-import com.soywiz.korim.bitmap.Bitmap
-
 data class Weapon(
     val price: Int,
     val bought: Boolean,
@@ -7,7 +5,6 @@ data class Weapon(
     val description: String,
     val damage: Double,
     val fireRate: Double,
-    val bitmap: Bitmap,
     val type: Type
 ) {
     enum class Type {

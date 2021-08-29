@@ -1,5 +1,6 @@
 package bullet
 
+import Assets
 import Weapon
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
@@ -9,10 +10,10 @@ import com.soywiz.korma.geom.plus
 import events.BulletHitEvent
 import events.EventBus
 
-fun Container.shellBullet(bus: EventBus, position: Point, targetPosition: Point, weapon: Weapon) {
+fun Container.shellBullet(bus: EventBus, position: Point, targetPosition: Point, weapon: Weapon, assets: Assets) {
     val dir = targetPosition - position
     dir.normalize()
-    sprite(weapon.bitmap) {
+    sprite(assets.getWeaponBitmap(weapon)) {
         addProp("bullet", true)
         position(position)
         scaledHeight = 10.0

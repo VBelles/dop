@@ -1,10 +1,9 @@
 package bullet
 
+import Assets
 import Weapon
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
-import com.soywiz.korim.atlas.readAtlas
-import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
 import com.soywiz.korma.geom.plus
@@ -12,12 +11,11 @@ import events.BulletHitEvent
 import events.EventBus
 import lerp
 
-suspend fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, weapon: Weapon) {
-    val atlas = resourcesVfs["sprites/explosion.xml"].readAtlas()
-    val explosion = atlas.getSpriteAnimation(prefix = "explosionSmoke", TimeSpan(120.0))
+fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, weapon: Weapon, assets: Assets) {
+    val explosion = assets.explosionAtlas.getSpriteAnimation(prefix = "explosionSmoke", TimeSpan(120.0))
     val dir = targetPosition - startPos
     dir.normalize()
-    sprite(weapon.bitmap) {
+    sprite(assets.ballBitmap) {
         position(Point(startPos))
         scaledHeight = 10.0
         scaledWidth = width * scaledHeight / height
