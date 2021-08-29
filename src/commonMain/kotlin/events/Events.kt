@@ -7,8 +7,8 @@ data class BulletHitEvent(val target: View, val damage: Double)
 
 data class EnemyAttackEvent(val damage: Double)
 
-data class ChangeWeapon(val weapon: Weapon)
-
 object ClearWaveEvent
 
 object NextWaveEvent
+
+data class WeaponBoughtEvent(val weapon: Weapon)

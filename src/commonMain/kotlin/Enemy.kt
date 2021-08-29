@@ -47,7 +47,6 @@ suspend fun Container.enemy(
             hp = 0
             addProp("enemy", false)
             scaleX = -scaleX
-            x += scaledHeight
             playAnimationLooped(runAnimation)
             action = Action.Dying
         }
@@ -80,7 +79,7 @@ suspend fun Container.enemy(
                         }
                         EnemyType.Range -> if (timeLock.check()) {
                             playAnimation(attackAnimation)
-                            enemyBullet(bus, pos, Point(baseX, pos.y + scaledHeight / 2), weapon, assets)
+                            enemyBullet(bus, pos, Point(baseX, pos.y), weapon, assets)
                         }
                     }
                 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.delay
 suspend fun Stage.mainScene(){
     val bus = injector().get<EventBus>()
     val map = injector().get<Assets>().map
-    val inventory = injector().get<Inventory>()
+    val weapons = injector().get<List<Weapon>>()
 
     val objects = map.objectLayers[0]
     val playerSpawn = objects.getByName("player_spawn")!!.let { Point(it.x, it.y) }
@@ -52,7 +52,7 @@ suspend fun Stage.mainScene(){
             delay(wave.enemyRate[phase])
             now = com.soywiz.klock.DateTime.nowUnix()
             val position = Point(spawnMax.x, kotlin.random.Random.nextDouble(spawnMax.y, spawnMin.y))
-            scenario.enemy(position, baseX, EnemyType.values().random(), inventory.weapons.last())
+            scenario.enemy(position, baseX, EnemyType.values().random(), weapons.last())
         }
 
         bus.send(events.ClearWaveEvent)

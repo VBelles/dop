@@ -4,11 +4,13 @@ import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
 import events.EventBus
 import events.NextWaveEvent
+import events.WeaponBoughtEvent
 
 
 suspend fun Container.shop() {
 
     val bus = injector().get<EventBus>()
+    val weapons = injector().get<List<Weapon>>()
     val inventory = injector().get<Inventory>()
     val assets = injector().get<Assets>()
 
@@ -20,33 +22,30 @@ suspend fun Container.shop() {
         selectedIndex = index
         previousSelectedView.strokeThickness = 0.0
         view.strokeThickness = 5.0
-        val weapon = inventory.weapons[index]
+        val weapon = weapons[index]
         (findViewByName("description") as Text).text = weapon.description
 
         val buyText = findViewByName("buyText") as Text
         buyText.text = when {
-            weapon.bought -> "Owned"
+            weapon in inventory.weapons -> "Owned"
             weapon.price > inventory.money -> "Costs ${weapon.price}"
             else -> "Buy by ${weapon.price}"
         }
         buyText.centerOn(buyText.parent!!)
         (findViewByName("buyBackground") as RoundRect).fill = when {
-            weapon.bought || weapon.price > inventory.money -> Colors.BLACK.withA(70)
+            weapon in inventory.weapons || weapon.price > inventory.money -> Colors.BLACK.withA(70)
             else -> Colors["#43a047"]
         }
     }
 
     fun buyWeapon() {
-        val weapon = inventory.weapons[selectedIndex]
-        if (weapon.bought || weapon.price > inventory.money) return
+        val weapon = weapons[selectedIndex]
+        if (weapon in inventory.weapons || weapon.price > inventory.money) return
         inventory.money -= weapon.price
 
-        inventory.weapons = inventory.weapons.mapIndexed { index: Int, w: Weapon ->
-            when (index) {
-                selectedIndex -> w.copy(bought = true)
-                else -> w
-            }
-        }
+        inventory.weapons = inventory.weapons + weapon
+
+        bus.send(WeaponBoughtEvent(weapon))
 
         updateSelected(selectedIndex)
         (findViewByName("money") as Text).text = "Money ${inventory.money}"
@@ -54,7 +53,7 @@ suspend fun Container.shop() {
 
     container {
         var offset = 0.0
-        inventory.weapons.forEachIndexed { index, weapon ->
+        weapons.forEachIndexed { index, weapon ->
             container {
                 x = offset
                 offset += 120.0

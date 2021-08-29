@@ -1,6 +1,5 @@
 data class Weapon(
     val price: Int,
-    val bought: Boolean,
     val name: String,
     val description: String,
     val damage: Double,
