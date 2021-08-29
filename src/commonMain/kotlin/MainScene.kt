@@ -1,8 +1,8 @@
+import com.soywiz.korev.MouseButton
 import com.soywiz.korge.tiled.tiledMapView
-import com.soywiz.korge.view.Stage
-import com.soywiz.korge.view.container
+import com.soywiz.korge.view.*
 import com.soywiz.korge.view.filter.BlurFilter
-import com.soywiz.korge.view.name
+import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
 import com.soywiz.korma.geom.Point
 import events.EventBus
@@ -20,6 +20,8 @@ suspend fun Stage.mainScene() {
     val spawnMin = objects.getByName("spawn_min")!!
     val baseX = objects.getByName("base")!!.x
 
+    val blurFilter = BlurFilter()
+
     val scenario = container {
         tiledMapView(map)
         player(playerSpawn)
@@ -31,7 +33,42 @@ suspend fun Stage.mainScene() {
         visible = false
     }
 
-    val blurFilter = BlurFilter()
+    scenario.addFilter(blurFilter)
+
+    val intro = container {
+        roundRect(
+            width = 380.0,
+            height = 100.0,
+            rx = 15.0,
+            ry = 15.0,
+            fill = Colors.BLACK.withA(70),
+        )
+        centerXOnStage()
+        text(
+            "You woke up very early to take a nice parceled place\non the beach, doesn't matter what will come, you will\nprotect it",
+            color = Colors.WHITE
+        ) {
+            x = 10.0
+            y = 10.0
+        }
+        text("*Click to continue*", color = Colors.WHITE) {
+            x = 10.0
+            y = 10.0
+            centerOn(parent!!)
+            alignBottomToBottomOf(parent!!, 10)
+        }
+        alignBottomToBottomOf(root, 200)
+
+        addUpdater {
+            if (input.mouseButtonPressed(MouseButton.LEFT)) {
+                bus.send(NextWaveEvent)
+            }
+        }
+    }
+
+    bus.waitEvent<NextWaveEvent>()
+    intro.removeFromParent()
+    scenario.removeFilter(blurFilter)
 
     val waves = mutableListOf<Wave>()
     waves.add(Wave(30000.0, listOf(1500L, 1000L, 800L)))

@@ -35,7 +35,7 @@ suspend fun Container.shop() {
         buyText.centerOn(buyText.parent!!)
         (findViewByName("buyBackground") as RoundRect).fill = when {
             weapon in inventory.weapons || weapon.price > inventory.money -> Colors.BLACK.withA(70)
-            else -> Colors["#43a047"]
+            else -> Colors["#43a047"].withA(180)
         }
     }
 
@@ -107,7 +107,7 @@ suspend fun Container.shop() {
             height = 30.0,
             rx = 15.0,
             ry = 15.0,
-            fill = Colors["#43a047"],
+            fill = Colors["#43a047"].withA(180),
         ) {
             name("buyBackground")
         }
