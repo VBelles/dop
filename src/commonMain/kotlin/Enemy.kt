@@ -3,10 +3,7 @@ import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
 import com.soywiz.korinject.injector
 import com.soywiz.korma.geom.Point
-import events.BulletHitEvent
-import events.ClearWaveEvent
-import events.EnemyAttackEvent
-import events.EventBus
+import events.*
 import kotlin.random.Random
 
 
@@ -36,6 +33,7 @@ suspend fun Container.enemy(
     val timeLock = TimeLock(fireRate)
     val range = if (type == EnemyType.Melee) 0.0 else Random.nextDouble(280.0, 320.0)
     val weaponOffset = Point(10.0, 10.0)
+    var idleWeapon: View? = null
 
     val invader = sprite(runAnimation) {
         addProp("enemy", true)
@@ -48,6 +46,7 @@ suspend fun Container.enemy(
             hp = 0
             addProp("enemy", false)
             scaleX = -scaleX
+            idleWeapon?.removeFromParent()
             playAnimationLooped(runAnimation)
             action = Action.Dying
         }
@@ -55,6 +54,7 @@ suspend fun Container.enemy(
         val eventListener = bus.register<BulletHitEvent> { event ->
             if (event.target === this) {
                 if (--hp <= 0) {
+                    bus.send(EnemyDiedEvent)
                     die()
                 }
             }
@@ -98,7 +98,7 @@ suspend fun Container.enemy(
     }
 
     if (type == EnemyType.Range) {
-        sprite(assets.getWeaponBitmap(weapon)) {
+        idleWeapon = sprite(assets.getWeaponBitmap(weapon)) {
             scaledHeight = 10.0
             scaledWidth = width * scaledHeight / height
             center()
