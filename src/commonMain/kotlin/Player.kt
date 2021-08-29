@@ -35,8 +35,6 @@ suspend fun Container.player(spawn: Point) {
 
 
     fun changeWeapon(weapon: Weapon) {
-        println("Change weapon $weapon")
-        println("Bought weapons ${inventory.weapons}")
         if (weapon in inventory.weapons) {
             selectedWeapon = weapon
             weapons.forEachIndexed { index, w ->
