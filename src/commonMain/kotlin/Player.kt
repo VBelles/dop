@@ -21,9 +21,6 @@ suspend fun Container.player(spawn: Point) {
     val weapons = injector().get<List<Weapon>>()
     val inventory = injector().get<Inventory>()
 
-
-    val speed = 150f
-    val dir = Point()
     val shootLock = TimeLock(500.0)
     var hp = 500
 

@@ -9,7 +9,7 @@ import events.EventBus
 import events.NextWaveEvent
 import kotlinx.coroutines.delay
 
-suspend fun Stage.mainScene(){
+suspend fun Stage.mainScene() {
     val bus = injector().get<EventBus>()
     val map = injector().get<Assets>().map
     val weapons = injector().get<List<Weapon>>()
@@ -34,7 +34,7 @@ suspend fun Stage.mainScene(){
     val blurFilter = BlurFilter()
 
     val waves = mutableListOf<Wave>()
-    waves.add(Wave(5000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(30000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(35000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(40000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(45000.0, listOf(1500L, 1000L, 800L)))

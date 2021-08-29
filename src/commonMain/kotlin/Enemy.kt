@@ -35,8 +35,9 @@ suspend fun Container.enemy(
     val fireRate = if (type == EnemyType.Melee) 1500.0 else 2500.0
     val timeLock = TimeLock(fireRate)
     val range = if (type == EnemyType.Melee) 0.0 else Random.nextDouble(280.0, 320.0)
+    val weaponOffset = Point(10.0, 10.0)
 
-    sprite(runAnimation) {
+    val invader = sprite(runAnimation) {
         addProp("enemy", true)
         scale = 0.3
         center()
@@ -63,7 +64,7 @@ suspend fun Container.enemy(
             die()
         }
 
-        addUpdaterWithViews { views, delta ->
+        addUpdater { delta ->
             when (action) {
                 Action.Running -> {
                     x += delta.seconds * speed
@@ -79,7 +80,7 @@ suspend fun Container.enemy(
                         }
                         EnemyType.Range -> if (timeLock.check()) {
                             playAnimation(attackAnimation)
-                            enemyBullet(bus, pos, Point(baseX, pos.y), weapon, assets)
+                            enemyBullet(bus, pos + weaponOffset, Point(baseX, pos.y), weapon, assets)
                         }
                     }
                 }
@@ -92,6 +93,18 @@ suspend fun Container.enemy(
                         waveClearListener.close()
                     }
                 }
+            }
+        }
+    }
+
+    if (type == EnemyType.Range) {
+        sprite(assets.getWeaponBitmap(weapon)) {
+            scaledHeight = 10.0
+            scaledWidth = width * scaledHeight / height
+            center()
+            addUpdater {
+                visible = timeLock.isReady()
+                pos = invader.pos + weaponOffset
             }
         }
     }
