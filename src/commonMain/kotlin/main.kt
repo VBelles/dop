@@ -1,3 +1,4 @@
+import com.soywiz.klock.DateTime
 import com.soywiz.korge.Korge
 import com.soywiz.korge.tiled.readTiledMap
 import com.soywiz.korge.tiled.tiledMapView
@@ -11,6 +12,12 @@ import com.soywiz.korma.geom.ScaleMode
 import events.EventBus
 import kotlinx.coroutines.delay
 
+
+data class Wave(
+    val ordinal: Int,
+    val duration: Double,
+    val enemyRate: List<Long>,
+)
 
 suspend fun initWeapons(): List<Weapon> {
     // This is stupid but listOf is not working on js
@@ -70,7 +77,8 @@ suspend fun main() = Korge(
     val spawnMin = objects.getByName("spawn_min")!!
     val baseX = objects.getByName("base")!!.x
 
-    val inventory = Inventory(weapons = initWeapons(), money = 25, score = 25)
+    val weapons = initWeapons()
+    val inventory = Inventory(weapons = weapons, money = 25, score = 25)
 
     container {
         tiledMapView(map)
@@ -79,11 +87,40 @@ suspend fun main() = Korge(
         //addFilter(BlurFilter())
     }
 
+    val zombieAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
+
     //shop(bus, inventory)
 
-    val zombieAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
-    while (true) {
-        enemy(bus, spawnMax.x, spawnMin.y, spawnMax.y, baseX, zombieAtlas)
-        delay(500)
+    val waves = mutableListOf<Wave>()
+    waves.add(Wave(0, 30000.0, listOf(1500L, 1000L, 800L)))
+
+
+    waves.forEach { wave ->
+        var now = DateTime.nowUnix()
+        val start = now
+        val end = start + wave.duration
+        while (DateTime.nowUnix() < end) {
+            val progress = (now - start) / (end - start)
+            val phase = (progress * wave.enemyRate.size).toInt()
+            delay(wave.enemyRate[phase])
+            now = DateTime.nowUnix()
+            enemy(
+                bus,
+                spawnMax.x,
+                spawnMin.y,
+                spawnMax.y,
+                baseX,
+                zombieAtlas,
+                EnemyType.values().random(),
+                weapons.last()
+            )
+        }
     }
+
+    /* while (true) {
+         enemy(bus, spawnMax.x, spawnMin.y, spawnMax.y, baseX, zombieAtlas, EnemyType.values().random(), weapons.last())
+         delay(500)
+     }*/
+
+
 }

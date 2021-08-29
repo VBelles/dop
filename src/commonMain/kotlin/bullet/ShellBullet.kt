@@ -1,6 +1,7 @@
 package bullet
 
 import Weapon
+import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
@@ -23,6 +24,9 @@ fun Container.shellBullet(bus: EventBus, position: Point, targetPosition: Point,
         }
         onCollision({ view -> view.props["enemy"] == true }) { target ->
             bus.send(BulletHitEvent(target, weapon.damage))
+            removeFromParent()
+        }
+        addFixedUpdater(TimeSpan(5000.0), false) {
             removeFromParent()
         }
     }

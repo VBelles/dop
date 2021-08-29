@@ -49,7 +49,7 @@ suspend fun Container.player(bus: EventBus, spawn: Point, atlas: Atlas, inventor
         anchor(.5, .5)
         position(spawn)
         bus.register<EnemyAttackEvent> { attack ->
-            hp -= attack.damage
+            hp -= attack.damage.toInt()
             println(hp)
             hpIndicator.text = "HP: $hp"
             if (hp <= 0) {

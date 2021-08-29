@@ -1,6 +1,7 @@
 package bullet
 
 import Weapon
+import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
@@ -31,6 +32,9 @@ fun Container.umbrellaBullet(bus: EventBus, position: Point, targetPosition: Poi
             if (--hp <= 0) {
                 removeFromParent()
             }
+        }
+        addFixedUpdater(TimeSpan(5000.0), false) {
+            removeFromParent()
         }
     }
 }

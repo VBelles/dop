@@ -4,15 +4,22 @@ import Weapon
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
 import com.soywiz.korim.atlas.readAtlas
+import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
 import com.soywiz.korma.geom.plus
 import events.BulletHitEvent
+import events.EnemyAttackEvent
 import events.EventBus
 import lerp
 
-suspend fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, weapon: Weapon) {
+suspend fun Container.enemyBullet(
+    bus: EventBus,
+    startPos: Point,
+    targetPosition: Point,
+    weapon: Weapon,
+) {
     val atlas = resourcesVfs["sprites/explosion.xml"].readAtlas()
     val explosion = atlas.getSpriteAnimation(prefix = "explosionSmoke", TimeSpan(120.0))
     val dir = targetPosition - startPos
@@ -23,7 +30,6 @@ suspend fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition:
         scaledWidth = width * scaledHeight / height
         anchor(.5, .5)
         addUpdater { delta ->
-            // pos = pos + dir * 10f * delta.seconds
             rotation += Angle(5.0 * delta.seconds)
 
             val arcHeight = 50.0
@@ -36,7 +42,7 @@ suspend fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition:
             pos = Point(nextX, baseY - arc)
 
             if (pos.distanceTo(targetPosition) < 10f) {
-                val explosionSprite = sprite(explosion) {
+                sprite(explosion) {
                     smoothing = false
                     position(targetPosition)
                     center()
@@ -45,11 +51,7 @@ suspend fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition:
                         removeFromParent()
                     }
                 }
-                root.foreachDescendant { target ->
-                    if (target.props["enemy"] == true && target.collidesWith(explosionSprite)) {
-                        bus.send(BulletHitEvent(target, weapon.damage))
-                    }
-                }
+                bus.send(EnemyAttackEvent(weapon.damage))
                 removeFromParent()
             }
         }
