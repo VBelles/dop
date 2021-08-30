@@ -24,7 +24,6 @@ class Assets : AsyncDependency {
     lateinit var throwSound: Sound
     lateinit var explosionSound: Sound
     lateinit var music: Sound
-    lateinit var shopMusic: Sound
     lateinit var step1Sound: Sound
     lateinit var step2Sound: Sound
     lateinit var waveSound: Sound
@@ -54,7 +53,6 @@ class Assets : AsyncDependency {
         throwSound = resourcesVfs["sound/throw.mp3"].readSound()
         explosionSound = resourcesVfs["sound/explosion.mp3"].readSound().apply { volume = 0.5 }
         music = resourcesVfs["sound/music.mp3"].readMusic()
-        shopMusic = resourcesVfs["sound/shop_music.mp3"].readMusic()
         step1Sound = resourcesVfs["sound/step1.mp3"].readSound().apply {
             volume = 0.05
         }

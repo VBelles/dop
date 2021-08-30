@@ -1,5 +1,8 @@
 import com.soywiz.klock.DateTime
+import com.soywiz.korau.sound.infinitePlaybackTimes
+import com.soywiz.korau.sound.paused
 import com.soywiz.korev.MouseButton
+import com.soywiz.korge.sound.fadeOutPause
 import com.soywiz.korge.tiled.tiledMapView
 import com.soywiz.korge.view.*
 import com.soywiz.korge.view.filter.BlurFilter
@@ -34,6 +37,8 @@ suspend fun Stage.mainScene() {
         shop()
         visible = false
     }
+
+    val music = assets.music.play(infinitePlaybackTimes).apply { volume = 0.4 }
 
     scenario.addFilter(blurFilter)
 
@@ -103,9 +108,13 @@ suspend fun Stage.mainScene() {
         scenario.addFilter(blurFilter)
         shop.visible = true
 
+        music.volume = 0.1
+
         bus.waitEvent<NextWaveEvent>()
 
         shop.visible = false
         scenario.removeFilter(blurFilter)
+
+        music.volume = 0.4
     }
 }
