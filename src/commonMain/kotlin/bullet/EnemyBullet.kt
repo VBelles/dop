@@ -4,12 +4,14 @@ import Assets
 import Weapon
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
+import com.soywiz.korio.async.launch
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
 import com.soywiz.korma.geom.plus
 import events.EnemyAttackEvent
 import events.EventBus
 import lerp
+import playFixed
 
 fun Container.enemyBullet(
     bus: EventBus,
@@ -24,7 +26,7 @@ fun Container.enemyBullet(
     sprite(assets.getWeaponBitmap(weapon)) {
         position(Point(startPos))
         anchor(.5, .5)
-        addUpdater { delta ->
+        addUpdaterWithViews { views, delta ->
             rotation += Angle(5.0 * delta.seconds)
 
             val arcHeight = 50.0
@@ -41,6 +43,7 @@ fun Container.enemyBullet(
                     smoothing = false
                     position(targetPosition)
                     center()
+                    views.launch { assets.explosionSound.playFixed() }
                     playAnimation()
                     addFixedUpdater(TimeSpan(explosion.size * 120.0), false) {
                         removeFromParent()
