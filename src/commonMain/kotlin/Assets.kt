@@ -50,9 +50,9 @@ class Assets : AsyncDependency {
         umbrellaBitmap = resourcesVfs["sprites/beach_umbrella.png"].readBitmap()
         ballBitmap = resourcesVfs["sprites/beach_ball.png"].readBitmap()
 
-        hitSound = resourcesVfs["sound/hit.mp3"].readSound()
+        hitSound = resourcesVfs["sound/hit.mp3"].readSound().apply { volume = 0.5 }
         throwSound = resourcesVfs["sound/throw.mp3"].readSound()
-        explosionSound = resourcesVfs["sound/explosion.mp3"].readSound()
+        explosionSound = resourcesVfs["sound/explosion.mp3"].readSound().apply { volume = 0.5 }
         music = resourcesVfs["sound/music.mp3"].readMusic()
         shopMusic = resourcesVfs["sound/shop_music.mp3"].readMusic()
         step1Sound = resourcesVfs["sound/step1.mp3"].readSound().apply {
