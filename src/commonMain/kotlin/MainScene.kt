@@ -11,6 +11,7 @@ import com.soywiz.korinject.AsyncInjector
 import com.soywiz.korinject.injector
 import com.soywiz.korinject.withInjector
 import com.soywiz.korma.geom.Point
+import events.ClearWaveEvent
 import events.EventBus
 import events.GameOverEvent
 import events.NextWaveEvent
@@ -26,7 +27,7 @@ class GameScene : Scene() {
             mapSingleton { Assets() }
             mapInstance(EventBus(this@GameScene))
             mapInstance(weapons)
-            mapInstance(Inventory(weapons = weapons.take(1), money = 0, score = 0))
+            mapInstance(Inventory(weapons = weapons.take(3), money = 0, score = 0))
         }
         withInjector(injector) {
             mainScene(sceneContainer)
@@ -79,20 +80,21 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
     waves.add(Wave("Monday", 30000.0, listOf(1500, 1200, 1100)))
     waves.add(Wave("Tuesday", 32000.0, listOf(1300, 1100, 1100)))
     waves.add(Wave("Wednesday", 40000.0, listOf(1300, 1000, 1000)))
-    waves.add(Wave("Thursday", 45000.0, listOf(1100, 1000, 1000)))
-    waves.add(Wave("Friday", 50000.0, listOf(800, 400, 200)))
-    waves.add(Wave("Saturday", 55000.0, listOf(700, 300, 200)))
-    waves.add(Wave("Sunday", 60000.0, listOf(600, 300, 200)))
+    waves.add(Wave("Thursday", 45000.0, listOf(1100, 900, 800)))
+    waves.add(Wave("Friday", 50000.0, listOf(1100, 800, 700)))
+    waves.add(Wave("Saturday", 55000.0, listOf(1000, 800, 600)))
+    waves.add(Wave("Sunday", 60000.0, listOf(900, 800, 500)))
 
 
     lateinit var lastWave: Wave
     var gameOver = false
-    bus.register<GameOverEvent> {
+    bus.register<GameOverEvent> { event ->
+        bus.send(ClearWaveEvent)
         if (!gameOver) {
             gameOver = true
             music.volume = 0.1
             scenario.addFilter(blurFilter)
-            gameOver(assets, lastWave.name) {
+            gameOver(event.victory, assets, lastWave.name) {
                 sceneContainer.changeTo<GameScene>()
             }
         }
@@ -121,7 +123,13 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
             if (gameOver) return
         }
 
-        bus.send(events.ClearWaveEvent)
+        if (wave === waves.last()) {
+            // Victory!
+            bus.send(GameOverEvent(true))
+            return
+        }
+
+        bus.send(ClearWaveEvent)
         scenario.addFilter(blurFilter)
         shop.visible = true
 
@@ -168,36 +176,39 @@ fun Container.intro(bus: EventBus) = container {
 
 }
 
-suspend fun Container.gameOver(assets: Assets, weekday: String, restart: suspend () -> Unit) = container {
-    roundRect(
-        width = 380.0,
-        height = 60.0,
-        rx = 15.0,
-        ry = 15.0,
-        fill = Colors.BLACK.withA(70),
-    )
-    centerXOnStage()
-    alignBottomToBottomOf(root, 200)
+suspend fun Container.gameOver(victory: Boolean, assets: Assets, weekday: String, restart: suspend () -> Unit) =
+    container {
+        roundRect(
+            width = 380.0,
+            height = 80.0,
+            rx = 15.0,
+            ry = 15.0,
+            fill = Colors.BLACK.withA(70),
+        )
+        centerXOnStage()
+        alignBottomToBottomOf(root, 200)
 
-    text(
-        "You kept the best place of the beach until $weekday",
-        color = Colors.WHITE
-    ) {
-        centerXOn(parent!!)
-        alignTopToTopOf(parent!!, 10)
-    }
-    text(
-        "*Click to try again*",
-        color = Colors.WHITE
-    ) {
-        centerXOn(parent!!)
-        alignBottomToBottomOf(parent!!, 10)
-    }
-    assets.gameOver.playFixed()
-    delay(1000)
-    addUpdaterWithViews { views, _ ->
-        if (views.input.mouseButtonPressed(MouseButton.LEFT) || views.input.mouseButtonPressed(MouseButton.RIGHT)) {
-            views.launch { restart() }
+        val text = when {
+            victory -> "Congratulations! You kept the best place of the beach\n all your holidays"
+            else -> "You kept the best place of the beach until $weekday"
+        }
+        text(text, color = Colors.WHITE) {
+            centerXOn(parent!!)
+            alignTopToTopOf(parent!!, 10)
+        }
+        text("*Click to ${if (victory) "play" else "try"} again*", color = Colors.WHITE) {
+            centerXOn(parent!!)
+            alignBottomToBottomOf(parent!!, 10)
+        }
+        if (victory) {
+            assets.winSound.playFixed()
+        } else {
+            assets.gameOver.playFixed()
+        }
+        delay(1000)
+        addUpdaterWithViews { views, _ ->
+            if (views.input.mouseButtonPressed(MouseButton.LEFT) || views.input.mouseButtonPressed(MouseButton.RIGHT)) {
+                views.launch { restart() }
+            }
         }
     }
-}

@@ -13,7 +13,7 @@ object ClearWaveEvent
 
 object NextWaveEvent
 
-object GameOverEvent
+data class GameOverEvent(val victory: Boolean)
 
 data class WeaponBoughtEvent(val weapon: Weapon)
 

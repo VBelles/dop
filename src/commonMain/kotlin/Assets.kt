@@ -36,6 +36,7 @@ class Assets : AsyncDependency {
     lateinit var buySound: Sound
     lateinit var earnMoneySound: Sound
     lateinit var gameOver: Sound
+    lateinit var winSound: Sound
 
     fun getWeaponBitmap(weapon: Weapon): BmpSlice {
         return when (weapon.type) {
@@ -68,6 +69,7 @@ class Assets : AsyncDependency {
         buySound = resourcesVfs["sound/buy.mp3"].readSound()
         earnMoneySound = resourcesVfs["sound/earn_money.mp3"].readSound()
         gameOver = resourcesVfs["sound/game_over.mp3"].readSound().apply { volume = 0.4 }
+        winSound = resourcesVfs["sound/win.mp3"].readSound().apply { volume = 0.4 }
     }
 
 }

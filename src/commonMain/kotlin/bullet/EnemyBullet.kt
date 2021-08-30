@@ -12,6 +12,8 @@ import events.EnemyAttackEvent
 import events.EventBus
 import lerp
 import playFixed
+import kotlin.math.abs
+import kotlin.random.Random
 
 fun Container.enemyBullet(
     bus: EventBus,
@@ -22,6 +24,7 @@ fun Container.enemyBullet(
 ) {
     val explosion = assets.melonAtlas.getSpriteAnimation(prefix = "exploding", TimeSpan(120.0))
     val dir = targetPosition - startPos
+    targetPosition.x += Random.nextInt(0, 150)
     dir.normalize()
     sprite(assets.getWeaponBitmap(weapon)) {
         position(Point(startPos))
@@ -38,7 +41,7 @@ fun Container.enemyBullet(
             val arc = arcHeight * (nextX - x0) * (nextX - x1) / (-0.25f * dist * dist)
             pos = Point(nextX, baseY - arc)
 
-            if (pos.distanceTo(targetPosition) < 10f) {
+            if (abs(pos.x - targetPosition.x) < 10) {
                 sprite(explosion) {
                     smoothing = false
                     position(targetPosition)

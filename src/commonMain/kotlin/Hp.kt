@@ -40,7 +40,7 @@ suspend fun Container.hp() {
     bus.register<EnemyAttackEvent> { event ->
         inventory.hp = (inventory.hp - event.damage.toInt()).coerceAtLeast(0)
         if (inventory.hp == 0) {
-            bus.send(GameOverEvent)
+            bus.send(GameOverEvent(false))
         }
         heartsContainer.removeFromParent()
         heartsContainer = buildHearts()
