@@ -112,8 +112,6 @@ suspend fun Container.enemy(
 
     if (type == EnemyType.Range) {
         idleWeapon = sprite(assets.getWeaponBitmap(weapon)) {
-            scaledHeight = 10.0
-            scaledWidth = width * scaledHeight / height
             center()
             addUpdater {
                 visible = timeLock.isReady()

@@ -21,8 +21,6 @@ fun Container.umbrellaBullet(bus: EventBus, position: Point, targetPosition: Poi
         rotation(Angle(angle))
         addProp("bullet", true)
         position(position)
-        scaledHeight = 30.0
-        scaledWidth = width * scaledHeight / height
         anchor(.5, .5)
         addUpdater { delta ->
             pos = pos + dir * 400 * delta.seconds

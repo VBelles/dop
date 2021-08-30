@@ -6,7 +6,6 @@ import com.soywiz.korev.Key
 import com.soywiz.korge.input.Input
 import com.soywiz.korge.input.onClick
 import com.soywiz.korge.view.*
-import com.soywiz.korim.bitmap.slice
 import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
 import com.soywiz.korio.async.launch
@@ -75,10 +74,8 @@ suspend fun Container.player(spawn: Point) {
     // Weapon on hand while have ammo
     sprite(assets.getWeaponBitmap(selectedWeapon)) {
         fun onWeaponChanged() {
-            bitmap = assets.getWeaponBitmap(selectedWeapon).slice()
+            bitmap = assets.getWeaponBitmap(selectedWeapon)
             center()
-            scaledHeight = 10.0
-            scaledWidth = width * scaledHeight / height
         }
 
         var weapon = selectedWeapon
@@ -112,8 +109,7 @@ suspend fun Container.player(spawn: Point) {
                     strokeThickness = if (selectedWeapon.type == weapon.type) 3.0 else 0.0
                     sprite(assets.getWeaponBitmap(weapon)) {
                         smoothing = false
-                        scaledHeight = 30.0
-                        scaledWidth = width * 30.0 / height
+                        scale = 1.6
                         centerOn(parent!!)
                     }
                 }

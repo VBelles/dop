@@ -80,7 +80,7 @@ suspend fun Stage.mainScene() {
     delay(1000)
 
     val waves = mutableListOf<Wave>()
-    waves.add(Wave(30000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave(1000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(35000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(40000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(45000.0, listOf(1500L, 1000L, 800L)))

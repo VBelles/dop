@@ -1,11 +1,9 @@
 import com.soywiz.korge.Korge
 import com.soywiz.korinject.AsyncInjector
-import com.soywiz.korinject.injector
 import com.soywiz.korinject.withInjector
 import com.soywiz.korma.geom.Anchor
 import com.soywiz.korma.geom.ScaleMode
 import events.EventBus
-import events.GameOverEvent
 
 
 data class Wave(
@@ -61,7 +59,7 @@ suspend fun main() = Korge(
         mapSingleton { Assets() }
         mapInstance(EventBus(this@Korge))
         mapInstance(weapons)
-        mapInstance(Inventory(weapons = weapons.take(1), money = 10000, score = 25))
+        mapInstance(Inventory(weapons = weapons.take(3), money = 10000, score = 25))
     }
     withInjector(injector) {
         /*val bus = injector().get<EventBus>()

@@ -77,8 +77,7 @@ suspend fun Container.shop() {
                     }
                     sprite(assets.getWeaponBitmap(weapon)) {
                         smoothing = false
-                        scaledHeight = 50.0
-                        scaledWidth = width * 50.0 / height
+                        scale = 3.0
                         centerOn(parent!!)
                     }
                 }
@@ -162,7 +161,7 @@ suspend fun Container.shop() {
             centerOn(parent!!)
         }
 
-        sprite(assets.money){
+        sprite(assets.money) {
             centerOn(parent!!)
             alignRightToRightOf(parent!!, 10)
         }

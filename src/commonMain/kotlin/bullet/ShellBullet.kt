@@ -16,8 +16,6 @@ fun Container.shellBullet(bus: EventBus, position: Point, targetPosition: Point,
     sprite(assets.getWeaponBitmap(weapon)) {
         addProp("bullet", true)
         position(position)
-        scaledHeight = 10.0
-        scaledWidth = width * scaledHeight / height
         anchor(.5, .5)
         addUpdater { delta ->
             pos = pos + dir * 500 * delta.seconds

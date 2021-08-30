@@ -18,13 +18,11 @@ fun Container.enemyBullet(
     weapon: Weapon,
     assets: Assets
 ) {
-    val explosion = assets.explosionAtlas.getSpriteAnimation(prefix = "explosionSmoke", TimeSpan(120.0))
+    val explosion = assets.melonAtlas.getSpriteAnimation(prefix = "exploding", TimeSpan(120.0))
     val dir = targetPosition - startPos
     dir.normalize()
     sprite(assets.getWeaponBitmap(weapon)) {
         position(Point(startPos))
-        scaledHeight = 10.0
-        scaledWidth = width * scaledHeight / height
         anchor(.5, .5)
         addUpdater { delta ->
             rotation += Angle(5.0 * delta.seconds)

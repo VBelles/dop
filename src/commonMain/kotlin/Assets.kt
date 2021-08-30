@@ -6,6 +6,8 @@ import com.soywiz.korge.tiled.readTiledMap
 import com.soywiz.korim.atlas.Atlas
 import com.soywiz.korim.atlas.readAtlas
 import com.soywiz.korim.bitmap.Bitmap
+import com.soywiz.korim.bitmap.BmpSlice
+import com.soywiz.korim.bitmap.slice
 import com.soywiz.korim.format.readBitmap
 import com.soywiz.korinject.AsyncDependency
 import com.soywiz.korio.file.std.resourcesVfs
@@ -15,10 +17,10 @@ class Assets : AsyncDependency {
     lateinit var map: TiledMap
     lateinit var invaderAtlas: Atlas
     lateinit var playerAtlas: Atlas
-    lateinit var explosionAtlas: Atlas
     lateinit var shellBitmap: Bitmap
     lateinit var umbrellaBitmap: Bitmap
-    lateinit var ballBitmap: Bitmap
+    lateinit var melonBitmap: Bitmap
+    lateinit var melonAtlas: Atlas
     lateinit var hearts: Atlas
     lateinit var money: Bitmap
 
@@ -34,11 +36,11 @@ class Assets : AsyncDependency {
     lateinit var buySound: Sound
     lateinit var earnMoneySound: Sound
 
-    fun getWeaponBitmap(weapon: Weapon): Bitmap {
+    fun getWeaponBitmap(weapon: Weapon): BmpSlice {
         return when (weapon.type) {
-            Weapon.Type.Shell -> shellBitmap
-            Weapon.Type.Umbrella -> umbrellaBitmap
-            Weapon.Type.Ball -> ballBitmap
+            Weapon.Type.Shell -> shellBitmap.slice()
+            Weapon.Type.Umbrella -> umbrellaBitmap.slice()
+            Weapon.Type.Ball -> melonBitmap.slice()
         }
     }
 
@@ -46,10 +48,10 @@ class Assets : AsyncDependency {
         map = resourcesVfs["dop.tmx"].readTiledMap()
         playerAtlas = resourcesVfs["sprites/player/player_sheet.xml"].readAtlas()
         invaderAtlas = resourcesVfs["sprites/zombie/zombie_sheet.xml"].readAtlas()
-        explosionAtlas = resourcesVfs["sprites/explosion.xml"].readAtlas()
+        melonAtlas = resourcesVfs["sprites/melon_sheet.xml"].readAtlas()
+        melonBitmap = resourcesVfs["sprites/melon.png"].readBitmap()
         shellBitmap = resourcesVfs["sprites/shell.png"].readBitmap()
         umbrellaBitmap = resourcesVfs["sprites/beach_umbrella.png"].readBitmap()
-        ballBitmap = resourcesVfs["sprites/beach_ball.png"].readBitmap()
         hearts = resourcesVfs["sprites/heart_sheet.xml"].readAtlas()
         money = resourcesVfs["sprites/money.png"].readBitmap()
 
