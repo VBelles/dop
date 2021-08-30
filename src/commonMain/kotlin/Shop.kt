@@ -54,7 +54,7 @@ suspend fun Container.shop() {
         bus.send(WeaponBoughtEvent(weapon))
 
         updateSelected(selectedIndex)
-        (findViewByName("money") as Text).text = "Money ${inventory.money}"
+        (findViewByName("money") as Text).text = "${inventory.money}"
     }
 
     container {
@@ -134,9 +134,7 @@ suspend fun Container.shop() {
             rx = 15.0,
             ry = 15.0,
             fill = Colors["#43a047"].withA(180),
-        ) {
-            name("buyBackground")
-        }
+        )
         alignBottomToBottomOf(root, 250)
         alignRightToRightOf(root, 60)
         onClick {
@@ -146,22 +144,36 @@ suspend fun Container.shop() {
         text("Next wave", color = Colors.WHITE) {
             centerOn(parent!!)
         }
-
     }
 
     container {
-        text("Money ${inventory.money}") {
-            name("money")
-        }
+        roundRect(
+            width = 100.0,
+            height = 30.0,
+            rx = 15.0,
+            ry = 15.0,
+            fill = Colors.BLACK.withA(70),
+        )
         alignBottomToBottomOf(root, 10)
         alignLeftToLeftOf(root, 10)
+
+        text("${inventory.money}", color = Colors.WHITE) {
+            name("money")
+            centerOn(parent!!)
+        }
+
+        sprite(assets.money){
+            centerOn(parent!!)
+            alignRightToRightOf(parent!!, 10)
+        }
+
     }
 
 
     bus.register<EnemyDiedEvent> {
         inventory.money += 50
         assets.earnMoneySound.play()
-        (findViewByName("money") as Text).text = "Money ${inventory.money}"
+        (findViewByName("money") as Text).text = "${inventory.money}"
     }
 
     updateSelected(0)

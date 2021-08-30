@@ -13,5 +13,7 @@ object ClearWaveEvent
 
 object NextWaveEvent
 
+object GameOverEvent
+
 data class WeaponBoughtEvent(val weapon: Weapon)
 

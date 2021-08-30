@@ -19,6 +19,8 @@ class Assets : AsyncDependency {
     lateinit var shellBitmap: Bitmap
     lateinit var umbrellaBitmap: Bitmap
     lateinit var ballBitmap: Bitmap
+    lateinit var hearts: Atlas
+    lateinit var money: Bitmap
 
     lateinit var hitSound: Sound
     lateinit var throwSound: Sound
@@ -48,6 +50,8 @@ class Assets : AsyncDependency {
         shellBitmap = resourcesVfs["sprites/shell.png"].readBitmap()
         umbrellaBitmap = resourcesVfs["sprites/beach_umbrella.png"].readBitmap()
         ballBitmap = resourcesVfs["sprites/beach_ball.png"].readBitmap()
+        hearts = resourcesVfs["sprites/heart_sheet.xml"].readAtlas()
+        money = resourcesVfs["sprites/money.png"].readBitmap()
 
         hitSound = resourcesVfs["sound/hit.mp3"].readSound().apply { volume = 0.5 }
         throwSound = resourcesVfs["sound/throw.mp3"].readSound()

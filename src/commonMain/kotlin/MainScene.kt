@@ -1,8 +1,6 @@
 import com.soywiz.klock.DateTime
 import com.soywiz.korau.sound.infinitePlaybackTimes
-import com.soywiz.korau.sound.paused
 import com.soywiz.korev.MouseButton
-import com.soywiz.korge.sound.fadeOutPause
 import com.soywiz.korge.tiled.tiledMapView
 import com.soywiz.korge.view.*
 import com.soywiz.korge.view.filter.BlurFilter
@@ -30,6 +28,8 @@ suspend fun Stage.mainScene() {
     val scenario = container {
         tiledMapView(map)
         player(playerSpawn)
+        hp()
+        money()
     }
 
     val shop = container {

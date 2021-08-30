@@ -14,5 +14,8 @@ data class Weapon(
 data class Inventory(
     var weapons: List<Weapon>,
     var money: Int,
+    var hp: Int = MAX_HP,
     var score: Int,
 )
+
+const val MAX_HP = 32

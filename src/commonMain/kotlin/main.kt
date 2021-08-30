@@ -1,9 +1,11 @@
 import com.soywiz.korge.Korge
 import com.soywiz.korinject.AsyncInjector
+import com.soywiz.korinject.injector
 import com.soywiz.korinject.withInjector
 import com.soywiz.korma.geom.Anchor
 import com.soywiz.korma.geom.ScaleMode
 import events.EventBus
+import events.GameOverEvent
 
 
 data class Wave(
@@ -49,6 +51,7 @@ fun initWeapons(): List<Weapon> {
 }
 
 suspend fun main() = Korge(
+    title = "Defence of the Parcel",
     virtualWidth = 800, virtualHeight = 800,
     scaleAnchor = Anchor.BOTTOM_CENTER,
     scaleMode = ScaleMode.COVER
@@ -60,5 +63,13 @@ suspend fun main() = Korge(
         mapInstance(weapons)
         mapInstance(Inventory(weapons = weapons.take(1), money = 10000, score = 25))
     }
-    withInjector(injector) { mainScene() }
+    withInjector(injector) {
+        /*val bus = injector().get<EventBus>()
+        bus.register<GameOverEvent> {
+            println("Game over")
+            removeChildren()
+            mainScene()
+        }*/
+        mainScene()
+    }
 }

@@ -11,7 +11,6 @@ import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
 import com.soywiz.korio.async.launch
 import com.soywiz.korma.geom.Point
-import events.EnemyAttackEvent
 import events.EventBus
 import events.WeaponBoughtEvent
 
@@ -23,17 +22,11 @@ suspend fun Container.player(spawn: Point) {
     val inventory = injector().get<Inventory>()
 
     val shootLock = TimeLock(500.0)
-    var hp = 500
 
     var selectedWeapon: Weapon = inventory.weapons.first()
     //val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
     val attackAnimation = assets.playerAtlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
     val weaponOffset = Point(-10.0, 6.0)
-
-    val hpIndicator = text("HP: $hp", textSize = 20.0) {
-        position(this@player.width - 150, this@player.height - 250)
-    }
-
 
     fun changeWeapon(weapon: Weapon, views: Views) {
         if (weapon in inventory.weapons) {
@@ -45,7 +38,7 @@ suspend fun Container.player(spawn: Point) {
             views.launch {
                 assets.clickSound.play()
             }
-        }else{
+        } else {
             views.launch {
                 assets.clickErrorSound.play()
             }
@@ -76,15 +69,6 @@ suspend fun Container.player(spawn: Point) {
         name("player")
         anchor(.5, .5)
         position(spawn)
-        bus.register<EnemyAttackEvent> { attack ->
-            assets.hitSound.play()
-            hp -= attack.damage.toInt()
-            println(hp)
-            hpIndicator.text = "HP: $hp"
-            if (hp <= 0) {
-                hpIndicator.text = "Parcel lost"
-            }
-        }
     }
 
 
