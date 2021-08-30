@@ -20,7 +20,7 @@ suspend fun Container.player(spawn: Point) {
     val weapons = injector().get<List<Weapon>>()
     val inventory = injector().get<Inventory>()
 
-    val shootLock = TimeLock(500.0)
+    var shootLock = TimeLock(500.0)
 
     var selectedWeapon: Weapon = inventory.weapons.first()
     //val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
@@ -30,6 +30,8 @@ suspend fun Container.player(spawn: Point) {
     fun changeWeapon(weapon: Weapon, views: Views) {
         if (weapon in inventory.weapons) {
             selectedWeapon = weapon
+            shootLock = TimeLock(weapon.fireRate)
+            shootLock.check()
             weapons.forEachIndexed { index, w ->
                 val view = root.findViewByName("weapon_slot_$index") as RoundRect
                 view.strokeThickness = if (selectedWeapon.type == w.type) 3.0 else 0.0

@@ -38,8 +38,8 @@ fun initWeapons(): List<Weapon> {
     weapons.add(
         Weapon(
             price = 21000,
-            name = "Ball",
-            description = "A very inflated beach ball that explodes on contact with\nsand or invaders dealing 5 area damage\nCan shoot every 2s",
+            name = "Watermelon",
+            description = "A overripe watermelon that explodes on contact with\nsand or invaders dealing 5 area damage\nCan shoot every 2s",
             damage = 5.0,
             fireRate = 1500.0,
             type = Weapon.Type.Ball,

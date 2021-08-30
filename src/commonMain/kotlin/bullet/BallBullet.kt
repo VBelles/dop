@@ -12,6 +12,7 @@ import com.soywiz.korma.geom.plus
 import events.BulletHitEvent
 import events.EventBus
 import lerp
+import kotlin.math.abs
 
 fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, weapon: Weapon, assets: Assets) {
     val explosion = assets.melonAtlas.getSpriteAnimation(prefix = "exploding", TimeSpan(120.0))
@@ -28,12 +29,12 @@ fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, 
             val x0 = startPos.x
             val x1 = targetPosition.x
             val dist = x1 - x0
-            val nextX = pos.x + dir.x * 350f * delta.seconds
+            val nextX = pos.x + dir.x * 350 * delta.seconds
             val baseY = lerp(startPos.y, targetPosition.y, (nextX - x0) / dist)
-            val arc = arcHeight * (nextX - x0) * (nextX - x1) / (-0.25f * dist * dist)
+            val arc = arcHeight * (nextX - x0) * (nextX - x1) / (-0.25 * dist * dist)
             pos = Point(nextX, baseY - arc)
-
-            if (pos.distanceTo(targetPosition) < 10f) {
+            if (abs(pos.x - targetPosition.x) < 10) {
+                pos = targetPosition
                 sprite(explosion) {
                     views.launch {
                         scaleTo(2.5, 2.5, TimeSpan(700.0))
