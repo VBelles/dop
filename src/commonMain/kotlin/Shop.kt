@@ -42,11 +42,11 @@ suspend fun Container.shop() {
     suspend fun buyWeapon() {
         val weapon = weapons[selectedIndex]
         if (weapon in inventory.weapons || weapon.price > inventory.money) {
-            assets.clickErrorSound.play()
+            assets.clickErrorSound.playFixed()
             return
         }
-        assets.clickSound.play()
-        assets.buySound.play()
+        assets.clickSound.playFixed()
+        assets.buySound.playFixed()
         inventory.money -= weapon.price
 
         inventory.weapons = inventory.weapons + weapon
@@ -72,7 +72,7 @@ suspend fun Container.shop() {
                 ) {
                     name("weapon_$index")
                     onClick {
-                        assets.clickSound.play()
+                        assets.clickSound.playFixed()
                         updateSelected(index)
                     }
                     sprite(assets.getWeaponBitmap(weapon)) {
@@ -137,7 +137,7 @@ suspend fun Container.shop() {
         alignBottomToBottomOf(root, 250)
         alignRightToRightOf(root, 60)
         onClick {
-            assets.clickSound.play()
+            assets.clickSound.playFixed()
             bus.send(NextWaveEvent)
         }
         text("Next wave", color = Colors.WHITE) {
@@ -170,7 +170,7 @@ suspend fun Container.shop() {
 
 
     bus.register<EnemyDiedEvent> {
-        assets.earnMoneySound.play()
+        assets.earnMoneySound.playFixed()
         (findViewByName("money") as Text).text = "${inventory.money}"
     }
 

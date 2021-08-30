@@ -106,7 +106,7 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
             alignBottomToBottomOf(root, 120)
             centerXBetween(585, 765)
         }
-        assets.waveSound.play()
+        assets.waveSound.playFixed()
         delay(1000)
         var now = DateTime.nowUnix()
         val start = now
@@ -193,7 +193,7 @@ suspend fun Container.gameOver(assets: Assets, weekday: String, restart: suspend
         centerXOn(parent!!)
         alignBottomToBottomOf(parent!!, 10)
     }
-    assets.gameOver.play()
+    assets.gameOver.playFixed()
     delay(1000)
     addUpdaterWithViews { views, _ ->
         if (views.input.mouseButtonPressed(MouseButton.LEFT) || views.input.mouseButtonPressed(MouseButton.RIGHT)) {

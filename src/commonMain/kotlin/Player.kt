@@ -37,11 +37,11 @@ suspend fun Container.player(spawn: Point) {
                 view.strokeThickness = if (selectedWeapon.type == w.type) 3.0 else 0.0
             }
             views.launch {
-                assets.clickSound.play()
+                assets.clickSound.playFixed()
             }
         } else {
             views.launch {
-                assets.clickErrorSound.play()
+                assets.clickErrorSound.playFixed()
             }
 
         }
@@ -53,7 +53,7 @@ suspend fun Container.player(spawn: Point) {
     onClick {
         if (!shop.visible && shootLock.check()) {
             player.playAnimation(attackAnimation)
-            assets.throwSound.play()
+            assets.throwSound.playFixed()
             val startPosition = player.pos + weaponOffset
             val target = Point(stage!!.mouseXY)
             when (selectedWeapon.type) {

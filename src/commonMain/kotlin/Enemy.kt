@@ -57,7 +57,7 @@ suspend fun Container.enemy(
 
         val eventListener = bus.register<BulletHitEvent> { event ->
             if (event.target === this) {
-                assets.hitSound.play()
+                assets.hitSound.playFixed()
                 hp -= event.damage
                 if (hp <= 0) {
                     bus.send(EnemyDiedEvent)
@@ -79,7 +79,7 @@ suspend fun Container.enemy(
                     }
                     if (walkTimeLock.check()) {
                         views.launch {
-                            if (steps % 2 == 0) assets.step1Sound.play() else assets.step2Sound.play()
+                            if (steps % 2 == 0) assets.step1Sound.playFixed() else assets.step2Sound.playFixed()
                         }
                         steps++
                     }
@@ -87,12 +87,12 @@ suspend fun Container.enemy(
                 Action.Attacking -> {
                     when (type) {
                         EnemyType.Melee -> if (timeLock.check()) {
-                            views.launch { assets.throwSound.play() }
+                            views.launch { assets.throwSound.playFixed() }
                             playAnimation(attackAnimation)
                             bus.send(EnemyAttackEvent(1))
                         }
                         EnemyType.Range -> if (timeLock.check()) {
-                            views.launch { assets.throwSound.play() }
+                            views.launch { assets.throwSound.playFixed() }
                             playAnimation(attackAnimation)
                             enemyBullet(bus, pos + weaponOffset, Point(baseX, pos.y), weapon, assets)
                         }

@@ -12,6 +12,7 @@ import com.soywiz.korma.geom.plus
 import events.BulletHitEvent
 import events.EventBus
 import lerp
+import playFixed
 import kotlin.math.abs
 
 fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, weapon: Weapon, assets: Assets) {
@@ -47,7 +48,7 @@ fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, 
                         removeFromParent()
                     }
                 }
-                views.launch { assets.explosionSound.play() }
+                views.launch { assets.explosionSound.playFixed() }
                 root.foreachDescendant { target ->
                     if (target.props["enemy"] == true && target.pos.distanceTo(pos) < 60) {
                         bus.send(BulletHitEvent(target, weapon.damage))
