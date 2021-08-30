@@ -39,9 +39,14 @@ suspend fun Container.shop() {
         }
     }
 
-    fun buyWeapon() {
+    suspend fun buyWeapon() {
         val weapon = weapons[selectedIndex]
-        if (weapon in inventory.weapons || weapon.price > inventory.money) return
+        if (weapon in inventory.weapons || weapon.price > inventory.money) {
+            assets.clickErrorSound.play()
+            return
+        }
+        assets.clickSound.play()
+        assets.buySound.play()
         inventory.money -= weapon.price
 
         inventory.weapons = inventory.weapons + weapon
@@ -66,7 +71,10 @@ suspend fun Container.shop() {
                     fill = Colors.BLACK.withA(70),
                 ) {
                     name("weapon_$index")
-                    onClick { updateSelected(index) }
+                    onClick {
+                        assets.clickSound.play()
+                        updateSelected(index)
+                    }
                     sprite(assets.getWeaponBitmap(weapon)) {
                         smoothing = false
                         scaledHeight = 50.0
@@ -131,7 +139,10 @@ suspend fun Container.shop() {
         }
         alignBottomToBottomOf(root, 250)
         alignRightToRightOf(root, 60)
-        onClick { bus.send(NextWaveEvent) }
+        onClick {
+            assets.clickSound.play()
+            bus.send(NextWaveEvent)
+        }
         text("Next wave", color = Colors.WHITE) {
             centerOn(parent!!)
         }

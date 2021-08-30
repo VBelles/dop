@@ -1,3 +1,4 @@
+import com.soywiz.klock.DateTime
 import com.soywiz.korev.MouseButton
 import com.soywiz.korge.tiled.tiledMapView
 import com.soywiz.korge.view.*
@@ -13,6 +14,7 @@ suspend fun Stage.mainScene() {
     val bus = injector().get<EventBus>()
     val map = injector().get<Assets>().map
     val weapons = injector().get<List<Weapon>>()
+    val assets = injector().get<Assets>()
 
     val objects = map.objectLayers[0]
     val playerSpawn = objects.getByName("player_spawn")!!.let { Point(it.x, it.y) }
@@ -70,6 +72,8 @@ suspend fun Stage.mainScene() {
     intro.removeFromParent()
     scenario.removeFilter(blurFilter)
 
+    delay(1000)
+
     val waves = mutableListOf<Wave>()
     waves.add(Wave(30000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(35000.0, listOf(1500L, 1000L, 800L)))
@@ -79,15 +83,18 @@ suspend fun Stage.mainScene() {
     waves.add(Wave(55000.0, listOf(1500L, 1000L, 800L)))
     waves.add(Wave(60000.0, listOf(1500L, 1000L, 800L)))
 
+
     waves.forEach { wave ->
-        var now = com.soywiz.klock.DateTime.nowUnix()
+        assets.waveSound.play()
+        delay(1000)
+        var now = DateTime.nowUnix()
         val start = now
         val end = start + wave.duration
-        while (com.soywiz.klock.DateTime.nowUnix() < end) {
+        while (DateTime.nowUnix() < end) {
             val progress = (now - start) / (end - start)
             val phase = (progress * wave.enemyRate.size).toInt()
             delay(wave.enemyRate[phase])
-            now = com.soywiz.klock.DateTime.nowUnix()
+            now = DateTime.nowUnix()
             val position = Point(spawnMax.x, kotlin.random.Random.nextDouble(spawnMax.y, spawnMin.y))
             scenario.enemy(position, baseX, EnemyType.values().random(), weapons.last())
         }

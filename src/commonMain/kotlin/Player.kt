@@ -9,6 +9,7 @@ import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.slice
 import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
+import com.soywiz.korio.async.launch
 import com.soywiz.korma.geom.Point
 import events.EnemyAttackEvent
 import events.EventBus
@@ -34,21 +35,31 @@ suspend fun Container.player(spawn: Point) {
     }
 
 
-    fun changeWeapon(weapon: Weapon) {
+    fun changeWeapon(weapon: Weapon, views: Views) {
         if (weapon in inventory.weapons) {
             selectedWeapon = weapon
             weapons.forEachIndexed { index, w ->
                 val view = root.findViewByName("weapon_slot_$index") as RoundRect
                 view.strokeThickness = if (selectedWeapon.type == w.type) 3.0 else 0.0
             }
+            views.launch {
+                assets.clickSound.play()
+            }
+        }else{
+            views.launch {
+                assets.clickErrorSound.play()
+            }
+
         }
     }
 
     val shop by lazy { root.findViewByName("shop")!! }
     val player by lazy { root.findViewByName("player") as Sprite }
+
     onClick {
         if (!shop.visible && shootLock.check()) {
             player.playAnimation(attackAnimation)
+            assets.throwSound.play()
             val startPosition = player.pos + weaponOffset
             val target = Point(stage!!.mouseXY)
             when (selectedWeapon.type) {
@@ -66,6 +77,7 @@ suspend fun Container.player(spawn: Point) {
         anchor(.5, .5)
         position(spawn)
         bus.register<EnemyAttackEvent> { attack ->
+            assets.hitSound.play()
             hp -= attack.damage.toInt()
             println(hp)
             hpIndicator.text = "HP: $hp"
@@ -112,7 +124,7 @@ suspend fun Container.player(spawn: Point) {
                     fill = Colors.BLACK.withA(70),
                 ) {
                     name("weapon_slot_$index")
-                    onClick { changeWeapon(weapon) }
+                    onClick { changeWeapon(weapon, views()) }
                     strokeThickness = if (selectedWeapon.type == weapon.type) 3.0 else 0.0
                     sprite(assets.getWeaponBitmap(weapon)) {
                         smoothing = false
@@ -141,7 +153,7 @@ suspend fun Container.player(spawn: Point) {
                 input.keys.justPressed(Key.N3) -> 2
                 else -> -1
             }
-            inventory.weapons.getOrNull(index)?.let { changeWeapon(it) }
+            weapons.getOrNull(index)?.let { changeWeapon(it, views) }
         }
     }
 

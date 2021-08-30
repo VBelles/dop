@@ -2,6 +2,7 @@ import bullet.enemyBullet
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
 import com.soywiz.korinject.injector
+import com.soywiz.korio.async.launch
 import com.soywiz.korma.geom.Point
 import events.*
 import kotlin.random.Random
@@ -35,6 +36,9 @@ suspend fun Container.enemy(
     val weaponOffset = Point(10.0, 10.0)
     var idleWeapon: View? = null
 
+    val walkTimeLock = TimeLock(750.0)
+    var steps = 0
+
     val invader = sprite(runAnimation) {
         addProp("enemy", true)
         scale = 0.3
@@ -53,6 +57,7 @@ suspend fun Container.enemy(
 
         val eventListener = bus.register<BulletHitEvent> { event ->
             if (event.target === this) {
+                assets.hitSound.play()
                 if (--hp <= 0) {
                     bus.send(EnemyDiedEvent)
                     die()
@@ -64,21 +69,29 @@ suspend fun Container.enemy(
             die()
         }
 
-        addUpdater { delta ->
+        addUpdaterWithViews { views, delta ->
             when (action) {
                 Action.Running -> {
                     x += delta.seconds * speed
                     if (x + range + scaledWidth >= baseX) {
                         action = Action.Attacking
                     }
+                    if (walkTimeLock.check()) {
+                        views.launch {
+                            if (steps % 2 == 0) assets.step1Sound.play() else assets.step2Sound.play()
+                        }
+                        steps++
+                    }
                 }
                 Action.Attacking -> {
                     when (type) {
                         EnemyType.Melee -> if (timeLock.check()) {
+                            views.launch { assets.throwSound.play() }
                             playAnimation(attackAnimation)
                             bus.send(EnemyAttackEvent(5.0))
                         }
                         EnemyType.Range -> if (timeLock.check()) {
+                            views.launch { assets.throwSound.play() }
                             playAnimation(attackAnimation)
                             enemyBullet(bus, pos + weaponOffset, Point(baseX, pos.y), weapon, assets)
                         }
