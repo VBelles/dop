@@ -60,21 +60,14 @@ class Assets : AsyncDependency {
         throwSound = resourcesVfs["sound/throw.mp3"].readSound()
         explosionSound = resourcesVfs["sound/explosion.mp3"].readSound().apply { volume = 0.5 }
         music = resourcesVfs["sound/music.mp3"].readMusic()
-        step1Sound = resourcesVfs["sound/step1.mp3"].readSound().apply {
-            volume = 0.05
-        }
-        step2Sound = resourcesVfs["sound/step2.mp3"].readSound().apply {
-            volume = 0.05
-        }
+        step1Sound = resourcesVfs["sound/step1.mp3"].readSound()
+        step2Sound = resourcesVfs["sound/step2.mp3"].readSound()
         waveSound = resourcesVfs["sound/wave.mp3"].readSound().apply { volume = 0.3 }
         clickSound = resourcesVfs["sound/click.mp3"].readSound().apply { volume = 0.6 }
         clickErrorSound = resourcesVfs["sound/click_error.mp3"].readSound().apply { volume = 0.15 }
         buySound = resourcesVfs["sound/buy.mp3"].readSound()
         earnMoneySound = resourcesVfs["sound/earn_money.mp3"].readSound()
-        gameOver = resourcesVfs["sound/game_over.mp3"].readSound().apply {
-            volume = 0.4
-            pitch = 0.5
-        }
+        gameOver = resourcesVfs["sound/game_over.mp3"].readSound().apply { volume = 0.4 }
     }
 
 }
