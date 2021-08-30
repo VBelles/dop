@@ -1,17 +1,40 @@
 import com.soywiz.klock.DateTime
 import com.soywiz.korau.sound.infinitePlaybackTimes
 import com.soywiz.korev.MouseButton
+import com.soywiz.korge.scene.Scene
+import com.soywiz.korge.scene.SceneContainer
 import com.soywiz.korge.tiled.tiledMapView
 import com.soywiz.korge.view.*
 import com.soywiz.korge.view.filter.BlurFilter
 import com.soywiz.korim.color.Colors
+import com.soywiz.korinject.AsyncInjector
 import com.soywiz.korinject.injector
+import com.soywiz.korinject.withInjector
 import com.soywiz.korma.geom.Point
 import events.EventBus
+import events.GameOverEvent
 import events.NextWaveEvent
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.random.Random
 
-suspend fun Stage.mainScene() {
+class GameScene : Scene() {
+
+    override suspend fun Container.sceneMain() {
+        val injector = AsyncInjector().apply {
+            val weapons = initWeapons()
+            mapSingleton { Assets() }
+            mapInstance(EventBus(this@GameScene))
+            mapInstance(weapons)
+            mapInstance(Inventory(weapons = weapons.take(1), money = 0, score = 0))
+        }
+        withInjector(injector) {
+            mainScene(sceneContainer)
+        }
+    }
+}
+
+suspend fun Container.mainScene(sceneContainer: SceneContainer) {
     val bus = injector().get<EventBus>()
     val map = injector().get<Assets>().map
     val weapons = injector().get<List<Weapon>>()
@@ -30,7 +53,7 @@ suspend fun Stage.mainScene() {
         player(playerSpawn)
         hp()
         money()
-        text(""){name("weekday")}
+        text("") { name("weekday") }
     }
 
     val shop = container {
@@ -39,41 +62,12 @@ suspend fun Stage.mainScene() {
         visible = false
     }
 
-    val music = assets.music.play(infinitePlaybackTimes).apply { volume = 0.4 }
 
     scenario.addFilter(blurFilter)
 
-    val intro = container {
-        roundRect(
-            width = 380.0,
-            height = 100.0,
-            rx = 15.0,
-            ry = 15.0,
-            fill = Colors.BLACK.withA(70),
-        )
-        centerXOnStage()
-        text(
-            "You woke up very early to take a nice parceled place\non the beach, doesn't matter what will come, you will\nprotect it",
-            color = Colors.WHITE
-        ) {
-            x = 10.0
-            y = 10.0
-        }
-        text("*Click to continue*", color = Colors.WHITE) {
-            x = 10.0
-            y = 10.0
-            centerOn(parent!!)
-            alignBottomToBottomOf(parent!!, 10)
-        }
-        alignBottomToBottomOf(root, 200)
+    val intro = intro(bus)
 
-        addUpdater {
-            if (input.mouseButtonPressed(MouseButton.LEFT)) {
-                bus.send(NextWaveEvent)
-            }
-        }
-
-    }
+    val music = assets.music.play(infinitePlaybackTimes).apply { volume = 0.4 }
 
     bus.waitEvent<NextWaveEvent>()
     intro.removeFromParent()
@@ -91,7 +85,21 @@ suspend fun Stage.mainScene() {
     waves.add(Wave("Sunday", 60000.0, listOf(600, 300, 200)))
 
 
+    lateinit var lastWave: Wave
+    var gameOver = false
+    bus.register<GameOverEvent> {
+        if (!gameOver) {
+            gameOver = true
+            scenario.addFilter(blurFilter)
+            gameOver(lastWave.name) {
+                sceneContainer.changeTo<GameScene>()
+            }
+        }
+    }
+
+
     waves.forEach { wave ->
+        lastWave = wave
         (root.findViewByName("weekday") as Text).apply {
             text = wave.name
             alignBottomToBottomOf(root, 120)
@@ -107,8 +115,9 @@ suspend fun Stage.mainScene() {
             val phase = (progress * wave.enemyRate.size).toInt()
             delay(wave.enemyRate[phase])
             now = DateTime.nowUnix()
-            val position = Point(spawnMax.x, kotlin.random.Random.nextDouble(spawnMax.y, spawnMin.y))
+            val position = Point(spawnMax.x, Random.nextDouble(spawnMax.y, spawnMin.y))
             scenario.enemy(position, baseX, EnemyType.values().random(), weapons.last())
+            if (gameOver) return
         }
 
         bus.send(events.ClearWaveEvent)
@@ -123,5 +132,70 @@ suspend fun Stage.mainScene() {
         scenario.removeFilter(blurFilter)
 
         music.volume = 0.4
+    }
+}
+
+fun Container.intro(bus: EventBus) = container {
+    roundRect(
+        width = 380.0,
+        height = 100.0,
+        rx = 15.0,
+        ry = 15.0,
+        fill = Colors.BLACK.withA(70),
+    )
+    centerXOnStage()
+    text(
+        "You woke up very early to take a nice parceled place\non the beach, doesn't matter what will come, you will\nprotect it",
+        color = Colors.WHITE
+    ) {
+        x = 10.0
+        y = 10.0
+    }
+    text("*Click to continue*", color = Colors.WHITE) {
+        x = 10.0
+        y = 10.0
+        centerOn(parent!!)
+        alignBottomToBottomOf(parent!!, 10)
+    }
+    alignBottomToBottomOf(root, 200)
+
+    addUpdaterWithViews { views, _ ->
+        if (views.input.mouseButtonPressed(MouseButton.LEFT)) {
+            bus.send(NextWaveEvent)
+        }
+    }
+
+}
+
+suspend fun Container.gameOver(weekday: String, restart: suspend () -> Unit) = container {
+    roundRect(
+        width = 380.0,
+        height = 60.0,
+        rx = 15.0,
+        ry = 15.0,
+        fill = Colors.BLACK.withA(70),
+    )
+    centerXOnStage()
+    alignBottomToBottomOf(root, 200)
+
+    text(
+        "You kept the best place of the beach until $weekday",
+        color = Colors.WHITE
+    ) {
+        centerXOn(parent!!)
+        alignTopToTopOf(parent!!, 10)
+    }
+    text(
+        "*Click to try again*",
+        color = Colors.WHITE
+    ) {
+        centerXOn(parent!!)
+        alignBottomToBottomOf(parent!!, 10)
+    }
+    delay(1000)
+    addUpdaterWithViews { views, _ ->
+        if (views.input.mouseButtonPressed(MouseButton.LEFT) || views.input.mouseButtonPressed(MouseButton.RIGHT)) {
+            views.launch { restart() }
+        }
     }
 }

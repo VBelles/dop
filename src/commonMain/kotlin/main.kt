@@ -1,9 +1,11 @@
 import com.soywiz.korge.Korge
+import com.soywiz.korge.scene.Module
+import com.soywiz.korge.scene.Scene
 import com.soywiz.korinject.AsyncInjector
-import com.soywiz.korinject.withInjector
 import com.soywiz.korma.geom.Anchor
 import com.soywiz.korma.geom.ScaleMode
-import events.EventBus
+import com.soywiz.korma.geom.SizeInt
+import kotlin.reflect.KClass
 
 
 data class Wave(
@@ -49,26 +51,16 @@ fun initWeapons(): List<Weapon> {
     return weapons
 }
 
-suspend fun main() = Korge(
-    title = "Defence of the Parcel",
-    virtualWidth = 800, virtualHeight = 800,
-    scaleAnchor = Anchor.BOTTOM_CENTER,
-    scaleMode = ScaleMode.COVER
-) {
-    val weapons = initWeapons()
-    val injector = AsyncInjector().apply {
-        mapSingleton { Assets() }
-        mapInstance(EventBus(this@Korge))
-        mapInstance(weapons)
-        mapInstance(Inventory(weapons = weapons.take(1), money = 0, score = 0))
-    }
-    withInjector(injector) {
-        /*val bus = injector().get<EventBus>()
-        bus.register<GameOverEvent> {
-            println("Game over")
-            removeChildren()
-            mainScene()
-        }*/
-        mainScene()
+class GameModule : Module() {
+    override val mainScene: KClass<out Scene> = GameScene::class
+    override val size = SizeInt(800, 800)
+    override val scaleAnchor = Anchor.BOTTOM_CENTER
+    override val scaleMode = ScaleMode.COVER
+    override val windowSize = SizeInt(1280, 720)
+
+    override suspend fun AsyncInjector.configure() {
+        mapPrototype { GameScene() }
     }
 }
+
+suspend fun main() = Korge(Korge.Config(GameModule()))
