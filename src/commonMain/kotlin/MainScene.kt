@@ -27,7 +27,7 @@ class GameScene : Scene() {
             mapSingleton { Assets() }
             mapInstance(EventBus(this@GameScene))
             mapInstance(weapons)
-            mapInstance(Inventory(weapons = weapons.take(3), money = 0, score = 0))
+            mapInstance(Inventory(weapons = weapons.take(1), money = 0, score = 0))
         }
         withInjector(injector) {
             mainScene(sceneContainer)
