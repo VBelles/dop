@@ -4,6 +4,7 @@ import Assets
 import Weapon
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
+import com.soywiz.korge.view.tween.scaleTo
 import com.soywiz.korio.async.launch
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
@@ -33,7 +34,10 @@ fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, 
             pos = Point(nextX, baseY - arc)
 
             if (pos.distanceTo(targetPosition) < 10f) {
-                val explosionSprite = sprite(explosion) {
+                sprite(explosion) {
+                    views.launch {
+                        scaleTo(2.5, 2.5, TimeSpan(700.0))
+                    }
                     smoothing = false
                     position(targetPosition)
                     center()
@@ -44,7 +48,7 @@ fun Container.ballBullet(bus: EventBus, startPos: Point, targetPosition: Point, 
                 }
                 views.launch { assets.explosionSound.play() }
                 root.foreachDescendant { target ->
-                    if (target.props["enemy"] == true && target.collidesWith(explosionSprite)) {
+                    if (target.props["enemy"] == true && target.pos.distanceTo(pos) < 60) {
                         bus.send(BulletHitEvent(target, weapon.damage))
                     }
                 }
