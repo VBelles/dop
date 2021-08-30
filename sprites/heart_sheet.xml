@@ -1,0 +1,7 @@
+<TextureAtlas imagePath="heart_sheet.png">
+    <SubTexture name="0" x="0" y="0" width="17" height="17"/>
+    <SubTexture name="1" x="17" y="0" width="17" height="17"/>
+    <SubTexture name="2" x="34" y="0" width="17" height="17"/>
+    <SubTexture name="3" x="51" y="0" width="17" height="17"/>
+    <SubTexture name="4" x="68" y="0" width="17" height="17"/>
+</TextureAtlas>
