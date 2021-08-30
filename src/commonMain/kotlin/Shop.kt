@@ -170,7 +170,6 @@ suspend fun Container.shop() {
 
 
     bus.register<EnemyDiedEvent> {
-        inventory.money += 50
         assets.earnMoneySound.play()
         (findViewByName("money") as Text).text = "${inventory.money}"
     }

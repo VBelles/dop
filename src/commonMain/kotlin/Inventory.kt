@@ -2,7 +2,7 @@ data class Weapon(
     val price: Int,
     val name: String,
     val description: String,
-    val damage: Double,
+    val damage: Int,
     val fireRate: Double,
     val type: Type
 ) {

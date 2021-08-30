@@ -24,7 +24,7 @@ suspend fun Container.enemy(
 ) {
     val bus = injector().get<EventBus>()
     val speed = 50f
-    var hp = 2
+    var hp = 3
     val assets = injector().get<Assets>()
     val runAnimation = assets.invaderAtlas.getSpriteAnimation(prefix = "walk", TimeSpan(120.0))
     val attackAnimation = assets.invaderAtlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
@@ -58,7 +58,8 @@ suspend fun Container.enemy(
         val eventListener = bus.register<BulletHitEvent> { event ->
             if (event.target === this) {
                 assets.hitSound.play()
-                if (--hp <= 0) {
+                hp -= event.damage
+                if (hp <= 0) {
                     bus.send(EnemyDiedEvent)
                     die()
                 }
@@ -88,7 +89,7 @@ suspend fun Container.enemy(
                         EnemyType.Melee -> if (timeLock.check()) {
                             views.launch { assets.throwSound.play() }
                             playAnimation(attackAnimation)
-                            bus.send(EnemyAttackEvent(5.0))
+                            bus.send(EnemyAttackEvent(1))
                         }
                         EnemyType.Range -> if (timeLock.check()) {
                             views.launch { assets.throwSound.play() }

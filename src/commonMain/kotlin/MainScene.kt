@@ -30,6 +30,7 @@ suspend fun Stage.mainScene() {
         player(playerSpawn)
         hp()
         money()
+        text(""){name("weekday")}
     }
 
     val shop = container {
@@ -71,6 +72,7 @@ suspend fun Stage.mainScene() {
                 bus.send(NextWaveEvent)
             }
         }
+
     }
 
     bus.waitEvent<NextWaveEvent>()
@@ -80,16 +82,21 @@ suspend fun Stage.mainScene() {
     delay(1000)
 
     val waves = mutableListOf<Wave>()
-    waves.add(Wave(1000.0, listOf(1500L, 1000L, 800L)))
-    waves.add(Wave(35000.0, listOf(1500L, 1000L, 800L)))
-    waves.add(Wave(40000.0, listOf(1500L, 1000L, 800L)))
-    waves.add(Wave(45000.0, listOf(1500L, 1000L, 800L)))
-    waves.add(Wave(50000.0, listOf(1500L, 1000L, 800L)))
-    waves.add(Wave(55000.0, listOf(1500L, 1000L, 800L)))
-    waves.add(Wave(60000.0, listOf(1500L, 1000L, 800L)))
+    waves.add(Wave("Monday", 30000.0, listOf(1500, 1200, 1100)))
+    waves.add(Wave("Tuesday", 32000.0, listOf(1300, 1100, 1100)))
+    waves.add(Wave("Wednesday", 40000.0, listOf(1300, 1000, 1000)))
+    waves.add(Wave("Thursday", 45000.0, listOf(1100, 1000, 1000)))
+    waves.add(Wave("Friday", 50000.0, listOf(800, 400, 200)))
+    waves.add(Wave("Saturday", 55000.0, listOf(700, 300, 200)))
+    waves.add(Wave("Sunday", 60000.0, listOf(600, 300, 200)))
 
 
     waves.forEach { wave ->
+        (root.findViewByName("weekday") as Text).apply {
+            text = wave.name
+            alignBottomToBottomOf(root, 120)
+            centerXBetween(585, 765)
+        }
         assets.waveSound.play()
         delay(1000)
         var now = DateTime.nowUnix()

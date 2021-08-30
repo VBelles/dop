@@ -7,6 +7,7 @@ import events.EventBus
 
 
 data class Wave(
+    val name: String,
     val duration: Double,
     val enemyRate: List<Long>,
 )
@@ -18,8 +19,8 @@ fun initWeapons(): List<Weapon> {
         Weapon(
             price = 0,
             name = "Shell",
-            description = "Hard, fast and precise shells that hits up to 1 invader\ndealing 5 damage\nCan shoot every 0,5s",
-            damage = 5.0,
+            description = "Hard, fast and precise shells that hits up to 1 invader\ndealing 2 damage\nCan shoot every 0,5s",
+            damage = 2,
             fireRate = 500.0,
             type = Weapon.Type.Shell,
         )
@@ -27,21 +28,21 @@ fun initWeapons(): List<Weapon> {
 
     weapons.add(
         Weapon(
-            price = 7500,
+            price = 200,
             name = "Umbrella",
-            description = "Like a javelin that go through 3 invaders dealing 5 damage\nto each\nCan shoot every 1s",
-            damage = 5.0,
-            fireRate = 1000.0,
+            description = "Like a javelin that go through 3 invaders dealing 1 damage\nto each\nCan shoot every 0.8s",
+            damage = 2,
+            fireRate = 800.0,
             type = Weapon.Type.Umbrella,
         )
     )
     weapons.add(
         Weapon(
-            price = 21000,
+            price = 600,
             name = "Watermelon",
-            description = "A overripe watermelon that explodes on contact with\nsand or invaders dealing 5 area damage\nCan shoot every 2s",
-            damage = 5.0,
-            fireRate = 1500.0,
+            description = "A overripe watermelon that explodes on contact with\nsand or invaders dealing 2 area damage\nCan shoot every 1,2s",
+            damage = 3,
+            fireRate = 1200.0,
             type = Weapon.Type.Ball,
         )
     )
@@ -59,7 +60,7 @@ suspend fun main() = Korge(
         mapSingleton { Assets() }
         mapInstance(EventBus(this@Korge))
         mapInstance(weapons)
-        mapInstance(Inventory(weapons = weapons.take(3), money = 10000, score = 25))
+        mapInstance(Inventory(weapons = weapons.take(1), money = 0, score = 0))
     }
     withInjector(injector) {
         /*val bus = injector().get<EventBus>()

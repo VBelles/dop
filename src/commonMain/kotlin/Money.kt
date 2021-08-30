@@ -9,21 +9,24 @@ suspend fun Container.money() {
     val bus = injector().get<EventBus>()
 
     container {
-        text("${inventory.money}") {
-            name("money_indicator")
-        }
-        sprite(assets.money) {
+        val icon = sprite(assets.money) {
             x = 45.0
         }
-
+        val text = text("${inventory.money}") {
+            alignRightToLeftOf(icon, 10)
+            name("money_indicator")
+        }
         scale = 0.85
         x = 595.0
         alignBottomToBottomOf(root, 256)
+
+        bus.register<EnemyDiedEvent> {
+            inventory.money += 5
+            text.text = "${inventory.money}"
+            text.alignRightToLeftOf(icon, 10)
+        }
     }
 
 
-    bus.register<EnemyDiedEvent> { event ->
-        inventory.money += 50
-        (root.findViewByName("money_indicator") as Text).text = "${inventory.money}"
-    }
+
 }

@@ -46,7 +46,7 @@ fun Container.enemyBullet(
                         removeFromParent()
                     }
                 }
-                bus.send(EnemyAttackEvent(weapon.damage))
+                bus.send(EnemyAttackEvent(1))
                 removeFromParent()
             }
         }
