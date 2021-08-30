@@ -35,6 +35,7 @@ class Assets : AsyncDependency {
     lateinit var clickErrorSound: Sound
     lateinit var buySound: Sound
     lateinit var earnMoneySound: Sound
+    lateinit var gameOver: Sound
 
     fun getWeaponBitmap(weapon: Weapon): BmpSlice {
         return when (weapon.type) {
@@ -70,6 +71,10 @@ class Assets : AsyncDependency {
         clickErrorSound = resourcesVfs["sound/click_error.mp3"].readSound().apply { volume = 0.15 }
         buySound = resourcesVfs["sound/buy.mp3"].readSound()
         earnMoneySound = resourcesVfs["sound/earn_money.mp3"].readSound()
+        gameOver = resourcesVfs["sound/game_over.mp3"].readSound().apply {
+            volume = 0.4
+            pitch = 0.5
+        }
     }
 
 }

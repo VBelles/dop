@@ -90,8 +90,9 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
     bus.register<GameOverEvent> {
         if (!gameOver) {
             gameOver = true
+            music.volume = 0.1
             scenario.addFilter(blurFilter)
-            gameOver(lastWave.name) {
+            gameOver(assets, lastWave.name) {
                 sceneContainer.changeTo<GameScene>()
             }
         }
@@ -167,7 +168,7 @@ fun Container.intro(bus: EventBus) = container {
 
 }
 
-suspend fun Container.gameOver(weekday: String, restart: suspend () -> Unit) = container {
+suspend fun Container.gameOver(assets: Assets, weekday: String, restart: suspend () -> Unit) = container {
     roundRect(
         width = 380.0,
         height = 60.0,
@@ -192,6 +193,7 @@ suspend fun Container.gameOver(weekday: String, restart: suspend () -> Unit) = c
         centerXOn(parent!!)
         alignBottomToBottomOf(parent!!, 10)
     }
+    assets.gameOver.play()
     delay(1000)
     addUpdaterWithViews { views, _ ->
         if (views.input.mouseButtonPressed(MouseButton.LEFT) || views.input.mouseButtonPressed(MouseButton.RIGHT)) {
