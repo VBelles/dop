@@ -21,6 +21,7 @@ suspend fun Container.money() {
         alignBottomToBottomOf(root, 256)
 
         bus.register<EnemyDiedEvent> {
+            assets.earnMoneySound.playFixed()
             inventory.money += 5
             text.text = "${inventory.money}"
             text.alignRightToLeftOf(icon, 10)

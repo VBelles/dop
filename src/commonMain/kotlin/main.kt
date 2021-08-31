@@ -32,7 +32,7 @@ fun initWeapons(): List<Weapon> {
         Weapon(
             price = 200,
             name = "Umbrella",
-            description = "Like a javelin that go through 3 invaders dealing 1 damage\nto each\nCan shoot every 0.8s",
+            description = "Like a javelin that go through 3 invaders dealing 2 damage\nto each\nCan shoot every 0,8s",
             damage = 2,
             fireRate = 800.0,
             type = Weapon.Type.Umbrella,
@@ -42,7 +42,7 @@ fun initWeapons(): List<Weapon> {
         Weapon(
             price = 600,
             name = "Watermelon",
-            description = "A overripe watermelon that explodes on contact with\nsand or invaders dealing 2 area damage\nCan shoot every 1,2s",
+            description = "A overripe watermelon that explodes on contact with\nsand or invaders dealing 3 area damage\nCan shoot every 1,2s",
             damage = 3,
             fireRate = 1200.0,
             type = Weapon.Type.Ball,

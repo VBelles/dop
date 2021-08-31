@@ -2,7 +2,7 @@ import com.soywiz.korge.input.onClick
 import com.soywiz.korge.view.*
 import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
-import events.EnemyDiedEvent
+import events.ClearWaveEvent
 import events.EventBus
 import events.NextWaveEvent
 import events.WeaponBoughtEvent
@@ -168,10 +168,9 @@ suspend fun Container.shop() {
 
     }
 
-
-    bus.register<EnemyDiedEvent> {
-        assets.earnMoneySound.playFixed()
+    bus.register<ClearWaveEvent> {
         (findViewByName("money") as Text).text = "${inventory.money}"
+        updateSelected(0)
     }
 
     updateSelected(0)
