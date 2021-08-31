@@ -52,11 +52,13 @@ fun initWeapons(): List<Weapon> {
 }
 
 class GameModule : Module() {
+    override val title: String = "Defence of the Plot"
     override val mainScene: KClass<out Scene> = GameScene::class
     override val size = SizeInt(800, 800)
     override val scaleAnchor = Anchor.BOTTOM_CENTER
     override val scaleMode = ScaleMode.COVER
     override val windowSize = SizeInt(1280, 720)
+    override val icon: String = "sprites/melon.png"
 
     override suspend fun AsyncInjector.configure() {
         mapPrototype { GameScene() }

@@ -145,28 +145,35 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
 }
 
 fun Container.intro(bus: EventBus) = container {
-    roundRect(
+    val background = roundRect(
         width = 380.0,
-        height = 100.0,
+        height = 170.0,
         rx = 15.0,
         ry = 15.0,
         fill = Colors.BLACK.withA(70),
-    )
-    centerXOnStage()
-    text(
-        "You woke up very early to take a nice parceled place\non the beach, doesn't matter what will come, you will\nprotect it",
+    ) {
+        alignBottomToBottomOf(root, 130)
+        centerXOn(root)
+    }
+    val title = text(
+        "DEFENCE OF THE PLOT",
         color = Colors.WHITE
     ) {
-        x = 10.0
-        y = 10.0
+        scale = 2.0
+        centerXOn(background)
+        alignTopToTopOf(background, 20)
+    }
+    text(
+        "You woke up very early to take a nice plot on the\nbeach, doesn't matter what will come, you will protect\nit and enjoy your holidays",
+        color = Colors.WHITE
+    ) {
+        alignLeftToLeftOf(background, 20)
+        alignTopToBottomOf(title, 10)
     }
     text("*Click to continue*", color = Colors.WHITE) {
-        x = 10.0
-        y = 10.0
-        centerOn(parent!!)
-        alignBottomToBottomOf(parent!!, 10)
+        centerXOn(background)
+        alignBottomToBottomOf(background, 20)
     }
-    alignBottomToBottomOf(root, 200)
 
     addUpdaterWithViews { views, _ ->
         if (views.input.mouseButtonPressed(MouseButton.LEFT)) {
