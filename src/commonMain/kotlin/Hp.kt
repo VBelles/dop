@@ -1,8 +1,11 @@
+import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.alignBottomToBottomOf
 import com.soywiz.korge.view.container
 import com.soywiz.korge.view.sprite
+import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
+import com.soywiz.korio.async.delay
 import events.EnemyAttackEvent
 import events.EventBus
 import events.GameOverEvent
@@ -38,12 +41,18 @@ suspend fun Container.hp() {
 
     var heartsContainer = buildHearts()
     bus.register<EnemyAttackEvent> { event ->
-        inventory.hp = (inventory.hp - event.damage.toInt()).coerceAtLeast(0)
+        inventory.hp = (inventory.hp - event.damage).coerceAtLeast(0)
         if (inventory.hp == 0) {
             bus.send(GameOverEvent(false))
         }
         heartsContainer.removeFromParent()
         heartsContainer = buildHearts()
+
+        findViewByName("player")?.apply {
+            tint = Colors["#fabada"]
+            delay(TimeSpan(300.0))
+            tint = Colors.WHITE
+        }
 
     }
 }

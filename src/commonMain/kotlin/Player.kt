@@ -23,7 +23,7 @@ suspend fun Container.player(spawn: Point) {
     var shootLock = TimeLock(500.0)
 
     var selectedWeapon: Weapon = inventory.weapons.first()
-    //val runAnimation = atlas.getSpriteAnimation(prefix = "run", TimeSpan(120.0))
+
     val attackAnimation = assets.playerAtlas.getSpriteAnimation(prefix = "attack", TimeSpan(120.0))
     val weaponOffset = Point(-10.0, 6.0)
 
@@ -139,25 +139,4 @@ suspend fun Container.player(spawn: Point) {
         }
     }
 
-}
-
-
-private fun View.move(input: Input, dir: Point, speed: Float, delta: Double) {
-    dir.setToZero()
-    if (input.keys.pressing(Key.W)) {
-        dir.y -= 1
-    }
-    if (input.keys.pressing(Key.A)) {
-        dir.x -= 1
-    }
-    if (input.keys.pressing(Key.S)) {
-        dir.y += 1
-    }
-    if (input.keys.pressing(Key.D)) {
-        dir.x += 1
-    }
-    if (dir.x != 0.0 && dir.y != 0.0) {
-        dir.normalize()
-    }
-    pos = pos + dir * (speed * delta)
 }

@@ -1,7 +1,9 @@
 import bullet.enemyBullet
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.*
+import com.soywiz.korim.color.Colors
 import com.soywiz.korinject.injector
+import com.soywiz.korio.async.delay
 import com.soywiz.korio.async.launch
 import com.soywiz.korma.geom.Point
 import events.*
@@ -63,6 +65,9 @@ suspend fun Container.enemy(
                     bus.send(EnemyDiedEvent)
                     die()
                 }
+                tint = Colors["#fabada"]
+                delay(TimeSpan(300.0))
+                tint = Colors.WHITE
             }
         }
 
