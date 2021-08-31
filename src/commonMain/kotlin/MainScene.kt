@@ -1,5 +1,5 @@
 import com.soywiz.klock.DateTime
-import com.soywiz.korau.sound.infinitePlaybackTimes
+import com.soywiz.klock.TimeSpan
 import com.soywiz.korev.MouseButton
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.scene.SceneContainer
@@ -68,7 +68,18 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
 
     val intro = intro(bus)
 
-    val music = assets.music.play(infinitePlaybackTimes).apply { volume = 0.4 }
+    var music = assets.music.play().apply { volume = 0.4 }
+
+    addUpdaterWithViews { views, _ ->
+        views.launch {
+            if (music.current >= music.total - TimeSpan(5000.0)) {
+                val volume = music.volume
+                music.stop()
+                music = assets.music.play()
+                music.volume = volume
+            }
+        }
+    }
 
     bus.waitEvent<NextWaveEvent>()
     intro.removeFromParent()
@@ -84,6 +95,7 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
     waves.add(Wave("Friday", 50000.0, listOf(1100, 800, 700)))
     waves.add(Wave("Saturday", 55000.0, listOf(1000, 800, 600)))
     waves.add(Wave("Sunday", 60000.0, listOf(900, 800, 500)))
+
 
 
     lateinit var lastWave: Wave
