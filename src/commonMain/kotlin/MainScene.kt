@@ -68,15 +68,16 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
 
     val intro = intro(bus)
 
-    var music = assets.music.play().apply { volume = 0.4 }
-
-    addUpdaterWithViews { views, _ ->
-        views.launch {
-            if (music.current >= music.total - TimeSpan(5000.0)) {
-                val volume = music.volume
-                music.stop()
-                music = assets.music.play()
-                music.volume = volume
+    var music = assets.music.playForever().apply { volume = 0.4 }
+    if (music.total.milliseconds > 0) {
+        addUpdaterWithViews { views, _ ->
+            views.launch {
+                if (music.current >= music.total - TimeSpan(5000.0)) {
+                    val volume = music.volume
+                    music.stop()
+                    music = assets.music.play()
+                    music.volume = volume
+                }
             }
         }
     }
@@ -95,7 +96,6 @@ suspend fun Container.mainScene(sceneContainer: SceneContainer) {
     waves.add(Wave("Friday", 50000.0, listOf(1100, 800, 700)))
     waves.add(Wave("Saturday", 55000.0, listOf(1000, 800, 600)))
     waves.add(Wave("Sunday", 60000.0, listOf(900, 800, 500)))
-
 
 
     lateinit var lastWave: Wave
